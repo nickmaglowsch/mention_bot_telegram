@@ -100,6 +100,7 @@ bot.on("message", async (msg: TelegramBot.Message) => {
     }
     try {
       const group = await Group.findOne({ groupId: msg.chat.id, name: name });
+      console.log(msg?.entities)
       const users = msg?.entities?.map(e => {
         if (!e.user) return
         const { id, first_name } = e.user
@@ -109,6 +110,8 @@ bot.on("message", async (msg: TelegramBot.Message) => {
       if (!group || !users) {
         throw "group_not_found_or_users_not_found"
       }
+      console.log("group.users", group.users)
+      console.log("users", users)
 
       group.users = _.merge(group.users, users)
 
