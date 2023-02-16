@@ -5,6 +5,8 @@ import Group, { IGroup } from "./models/group";
 import _ from "lodash";
 require('dotenv').config()
 
+const logger = require('pino')()
+
 const token = process.env.TOKEN || '';
 
 const uri = process.env.DATABASE_URL || '';
@@ -12,11 +14,11 @@ const uri = process.env.DATABASE_URL || '';
 mongoose
   .connect(uri)
   .then(() => {
-    console.log("Connected to database");
+    logger.info("Connected to database");
   })
   .catch((err) => {
-    console.log("Failed to connect to database");
-    console.log(err);
+    logger.info("Failed to connect to database");
+    logger.info(err);
   });
 
 const bot = new TelegramBot(token, { polling: true });
@@ -100,7 +102,7 @@ bot.on("message", async (msg: TelegramBot.Message) => {
     }
     try {
       const group = await Group.findOne({ groupId: msg.chat.id, name: name });
-      console.log(msg?.entities)
+      logger.info(msg?.entities)
       const users = msg?.entities?.map(e => {
         if (!e.user) return
         const { id, first_name } = e.user
@@ -110,8 +112,10 @@ bot.on("message", async (msg: TelegramBot.Message) => {
       if (!group || !users) {
         throw "group_not_found_or_users_not_found"
       }
-      console.log("group.users", group.users)
-      console.log("users", users)
+      logger.info("group.users")
+      logger.info(group.users)
+      logger.info("users", users)
+      logger.info(users)
 
       group.users = _.merge(group.users, users)
 
