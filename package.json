@@ -9,7 +9,7 @@
     "start:dev": "ts-node src/index.ts",
     "prepush": "npm run test",
     "lint": "eslint '**/*.ts'",
-    "lint:fix": "eslint --fix '**/*.ts'",
+    "lint:fix": "eslint --fix 'src/**/*.ts'",
     "test:coverage": "jest --coverage",
     "test:coverage:json": "jest --coverage --coverageReporters=\"json-summary\" "
   },
