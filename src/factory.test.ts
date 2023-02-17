@@ -1,5 +1,6 @@
 import { CommandsNames } from "./interfaces/commands";
 import { TelegramFactory } from "./factory";
+import TelegramBot from "node-telegram-bot-api";
 
 describe("TelegramFactory", () => {
     it("should build a Create command", () => {
@@ -12,7 +13,7 @@ describe("TelegramFactory", () => {
     });
 
     it("should build an Add command with default and custom users", () => {
-        const entities = [
+        const entities: TelegramBot.MessageEntity[] = [
             {
                 type: "text_mention",
                 offset: 0,
