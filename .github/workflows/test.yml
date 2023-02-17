@@ -1,0 +1,51 @@
+name: Test and coverage
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Use Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        run: npm run test -- --coverage --runInBand
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v2.1.0
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+  merge-guard:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Use Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Check test coverage
+        run: |
+          npm run test -- --coverage --runInBand
+          coverage_threshold=$(node -p "require('./coverage/coverage-summary.json').total.lines.pct >= 50")
+          if [ "$coverage_threshold" = "false" ]; then
+            echo "Test coverage below 50%, merge not allowed"
+            exit 1
+          fi
