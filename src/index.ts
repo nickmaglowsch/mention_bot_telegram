@@ -2,6 +2,7 @@ import { IUser } from './models/user';
 import TelegramBot from "node-telegram-bot-api";
 import mongoose from "mongoose";
 import Group from "./models/group";
+import { Create } from "./commands/create";
 require('dotenv').config()
 
 const logger = require('pino')()
@@ -22,7 +23,7 @@ mongoose
 
 const bot = new TelegramBot(token, { polling: true });
 
-const commands = {
+export const commands = {
   MENTION: '@',
   ADD: 'mb add ',
   CREATE: 'mb create group '
@@ -51,27 +52,18 @@ bot.on("message", async (msg: TelegramBot.Message) => {
     }
   }
 
+  const factory = new Factory()
+
+  factory.create()
+
   if (text.startsWith(commands.CREATE)) {
-    const name = text.split(commands.CREATE)[1]?.trim();
-    if (!name) {
-      bot.sendMessage(msg.chat.id, `por favor mande um nome para o grupo`, {
-        reply_to_message_id: msg.message_id,
-      });
-    }
-    try {
-      await Group.create({
-        groupId: msg.chat.id,
-        name: name,
-        users: [],
-      });
-      bot.sendMessage(msg.chat.id, `created!`, {
-        reply_to_message_id: msg.message_id,
-      });
-    } catch (error) {
-      bot.sendMessage(msg.chat.id, `${error}`, {
-        reply_to_message_id: msg.message_id,
-      });
-    }
+    const create = new Create({
+      text,
+      bot,
+      msg
+    })
+
+    create.exec();
   }
 
   if (text.startsWith(commands.ADD)) {
