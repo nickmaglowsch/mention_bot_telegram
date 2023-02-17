@@ -1,4 +1,4 @@
-import {Create} from './Create';
+import {Create} from './create';
 import Group from '../models/group';
 import {CommandArgs} from "../interfaces/commandArgs";
 

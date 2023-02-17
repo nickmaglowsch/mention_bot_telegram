@@ -1,4 +1,4 @@
-import { Mention } from './Mention';
+import { Mention } from './mention';
 import Group from '../models/group';
 import {CommandArgs} from "../interfaces/commandArgs";
 
