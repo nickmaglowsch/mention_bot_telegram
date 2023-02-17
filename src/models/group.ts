@@ -10,9 +10,9 @@ export interface IGroup extends mongoose.Document {
 
 // Define the schema for the MongoDB collection
 const groupSchema = new mongoose.Schema({
-  groupId: { type: String, required: true },
-  name: { type: String, required: true },
-  users: [{ type: Object, required: true }],
+    groupId: { type: String, required: true },
+    name: { type: String, required: true },
+    users: [ { type: Object, required: true } ],
 });
 
 groupSchema.index({ groupId: 1, name: 1 }, { unique: true });

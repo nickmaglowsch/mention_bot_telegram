@@ -1,5 +1,5 @@
 import TelegramBot from "node-telegram-bot-api";
-import {isUserAllowedToUseCommand, isCommand} from "./utils";
+import { isUserAllowedToUseCommand, isCommand } from "./utils";
 
 describe("utils", () => {
     describe("isUserAllowedToUseCommand", () => {
