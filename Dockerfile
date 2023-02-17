@@ -13,4 +13,5 @@ COPY --from=build-image ./usr/src/app/dist ./dist
 RUN npm ci --production
 COPY . .
 EXPOSE 8080
+EXPOSE 9229
 CMD [ "node", "dist/index.js" ]

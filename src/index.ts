@@ -1,8 +1,7 @@
 import { IUser } from './models/user';
 import TelegramBot from "node-telegram-bot-api";
 import mongoose from "mongoose";
-import Group, { IGroup } from "./models/group";
-import _ from "lodash";
+import Group from "./models/group";
 require('dotenv').config()
 
 const logger = require('pino')()
@@ -37,6 +36,7 @@ const ADMIN_COMMANDS = [
 bot.on("message", async (msg: TelegramBot.Message) => {
   if (!msg.text) return;
   const text = msg.text;
+  logger.info(msg)
 
   if (ADMIN_COMMANDS.some((word) => text.includes(word))) {
     const userId = msg.from?.id;
@@ -106,8 +106,8 @@ bot.on("message", async (msg: TelegramBot.Message) => {
       const users = msg?.entities?.map(e => {
         if (!e.user) return
         const { id, first_name } = e.user
-        return { id, first_name }
-      })
+        return { id, first_name } as IUser
+      }) as unknown as IUser[]
 
       if (!group || !users) {
         throw "group_not_found_or_users_not_found"
@@ -117,7 +117,17 @@ bot.on("message", async (msg: TelegramBot.Message) => {
       logger.info("users", users)
       logger.info(users)
 
-      group.users = _.merge(group.users, users)
+      const mergedArray = group.users.concat(users).map((item) => {
+        const matchingItem = group.users.find((x) => x.id === item.id);
+        if (matchingItem) {
+          return { ...matchingItem, ...item };
+        }
+        return item;
+      });
+
+      group.users = mergedArray
+      logger.info("merge")
+      logger.info(group.users)
 
       await group.save()
 
