@@ -1,42 +1,30 @@
-import { Commands, CommandsNames } from "../interfaces/commands";
+import {Commands, CommandsNames} from "../interfaces/commands";
 import Group from "../models/group";
+import {CommandArgs} from "../interfaces/commandArgs";
+import {IUser} from "../models/user";
 
 
 export class Mention implements Commands {
     name = CommandsNames.MENTION;
-    args: any;
+    args: CommandArgs;
 
-    constructor(args: any) {
+    constructor(args: CommandArgs) {
         this.args = args;
     }
 
-    async exec(): Promise<void> {
-        const text = this.args.text;
-        const bot = this.args.bot;
-        const msg = this.args.msg;
+    async exec(): Promise<string> {
+        const {name, chatId} = this.args;
+        const group = await Group.findOne({groupId: chatId, name: name});
 
-        console.log(text)
+        if (!group || !group.users || group.users.length === 0) return 'group not exists or have no users';
 
-        const userName = text.split(this.name)[1]?.trim();
-        if (!userName) {
-            bot.sendMessage(msg.chat.id, `por favor mande um nome para o grupo`, {
-                reply_to_message_id: msg.message_id,
-            });
-        }
-        try {
-            await Group.create({
-                groupId: msg.chat.id,
-                name: this.name,
-                users: [],
-            });
-            bot.sendMessage(msg.chat.id, `created!`, {
-                reply_to_message_id: msg.message_id,
-            });
-        } catch (error) {
-            bot.sendMessage(msg.chat.id, `${error}`, {
-                reply_to_message_id: msg.message_id,
-            });
-        }
-
+        return group.users.reduce((acc: string, user: IUser) => {
+            if (user.id === -1) {
+                acc += `${user.first_name} `
+            } else {
+                acc += `<a href="tg://user?id=${user.id}">${user.first_name}</a> `;
+            }
+            return acc;
+        }, "");
     }
 }

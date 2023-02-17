@@ -1,42 +1,49 @@
-import { Commands, CommandsNames } from "../interfaces/commands";
+import {Commands, CommandsNames} from "../interfaces/commands";
 import Group from "../models/group";
+import {CommandArgs} from "../interfaces/commandArgs";
+
+const logger = require('pino')()
 
 
-export class Mention implements Commands {
+export class Add implements Commands {
     name = CommandsNames.ADD;
-    args: any;
+    args: CommandArgs;
 
-    constructor(args: any) {
+    constructor(args: CommandArgs) {
         this.args = args;
     }
 
-    async exec(): Promise<void> {
-        const text = this.args.text;
-        const bot = this.args.bot;
-        const msg = this.args.msg;
+    async exec(): Promise<string> {
+        const {name, chatId} = this.args;
+        const defaultUsers = this.args.defaultUsers ? this.args.defaultUsers : [];
+        const customUsers = this.args.customUsers ? this.args.customUsers : [];
 
-        console.log(text)
-
-        const userName = text.split(this.name)[1]?.trim();
-        if (!userName) {
-            bot.sendMessage(msg.chat.id, `por favor mande um nome para o grupo`, {
-                reply_to_message_id: msg.message_id,
-            });
-        }
         try {
-            await Group.create({
-                groupId: msg.chat.id,
-                name: this.name,
-                users: [],
-            });
-            bot.sendMessage(msg.chat.id, `created!`, {
-                reply_to_message_id: msg.message_id,
-            });
-        } catch (error) {
-            bot.sendMessage(msg.chat.id, `${error}`, {
-                reply_to_message_id: msg.message_id,
-            });
-        }
+            const group = await Group.findOne({groupId: chatId, name});
 
+            const allUsers = [...defaultUsers, ...customUsers]
+
+            if (!group || !allUsers) {
+                return "group_not_found_or_users_not_found"
+            }
+
+            const mergedArray = group.users.concat(allUsers).map((item) => {
+                const matchingItem = group.users.find((x) => x.id === item.id);
+                if (matchingItem) {
+                    return {...matchingItem, ...item};
+                }
+                return item;
+            });
+
+            group.users = [...mergedArray]
+            logger.info("merge")
+            logger.info(group.users)
+
+            await group.save()
+
+            return 'added';
+        } catch (error) {
+            return `${error}`;
+        }
     }
 }

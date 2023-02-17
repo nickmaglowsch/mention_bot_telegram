@@ -1,12 +1,11 @@
-# fly.toml file generated for rough-dust-2265 on 2023-02-16T18:43:07-03:00
+# fly.toml file generated for muddy-thunder-4105 on 2023-02-17T02:23:14-03:00
 
-app = "rough-dust-2265"
+app = "muddy-thunder-4105"
 kill_signal = "SIGINT"
 kill_timeout = 5
 processes = []
 
 [env]
-  PORT = "8080"
 
 [experimental]
   auto_rollback = true

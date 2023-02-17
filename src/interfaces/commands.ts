@@ -1,7 +1,9 @@
+import {CommandArgs} from "./commandArgs";
+
 export interface Commands {
     name: CommandsNames;
-    args: any;
-    exec: () => Promise<void>;
+    args: CommandArgs;
+    exec: () => Promise<string>;
 }
 
 export enum CommandsNames {
@@ -10,3 +12,13 @@ export enum CommandsNames {
     MENTION = 'mention'
 }
 
+export const commandsText = {
+    MENTION: '@',
+    ADD: 'mb add ',
+    CREATE: 'mb create group '
+}
+
+export const adminCommands = [
+    commandsText.ADD,
+    commandsText.CREATE,
+]
