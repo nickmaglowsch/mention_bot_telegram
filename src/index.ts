@@ -51,25 +51,6 @@ bot.on("message", async (msg: TelegramBot.Message) => {
     }
   }
 
-  if (text.includes(commands.MENTION)) {
-
-    const name = text.split("@")[1].trim();
-
-    const group = await Group.findOne({ groupId: msg.chat.id, name: name });
-
-    if (!group || !group.users || group.users.length === 0) return;
-
-    const mentions = group.users.reduce((acc: string, user: IUser) => {
-      acc += `[${user.first_name}](tg://user?id=${user.id}) `;
-      return acc;
-    }, "")
-
-    bot.sendMessage(msg.chat.id, mentions, {
-      reply_to_message_id: msg.message_id,
-      parse_mode: "Markdown",
-    });
-  }
-
   if (text.startsWith(commands.CREATE)) {
     const name = text.split(commands.CREATE)[1]?.trim();
     if (!name) {
@@ -107,17 +88,25 @@ bot.on("message", async (msg: TelegramBot.Message) => {
         if (!e.user) return
         const { id, first_name } = e.user
         return { id, first_name } as IUser
-      }) as unknown as IUser[]
+      }).filter(e => !!e) as unknown as IUser[] || []
 
-      if (!group || !users) {
+      // special case for users with custom username (aka @username)
+      const regex = /@(\S+)(?=\s)/g;
+      // add space in the end just in case
+      const mentions = `${text} `.match(regex) || [];
+
+      const customUsers = mentions.map(m => {
+        return { id: -1, first_name: m } as IUser
+      })
+
+      const allUsers = [...users, ...customUsers]
+
+      if (!group || !allUsers) {
         throw "group_not_found_or_users_not_found"
       }
-      logger.info("group.users")
-      logger.info(group.users)
-      logger.info("users", users)
-      logger.info(users)
 
-      const mergedArray = group.users.concat(users).map((item) => {
+
+      const mergedArray = group.users.concat(allUsers).map((item) => {
         const matchingItem = group.users.find((x) => x.id === item.id);
         if (matchingItem) {
           return { ...matchingItem, ...item };
@@ -125,7 +114,7 @@ bot.on("message", async (msg: TelegramBot.Message) => {
         return item;
       });
 
-      group.users = mergedArray
+      group.users = [...mergedArray]
       logger.info("merge")
       logger.info(group.users)
 
@@ -139,5 +128,28 @@ bot.on("message", async (msg: TelegramBot.Message) => {
         reply_to_message_id: msg.message_id,
       });
     }
+  }
+
+  if (text.includes(commands.MENTION)) {
+
+    const name = text.split("@")[1].trim();
+
+    const group = await Group.findOne({ groupId: msg.chat.id, name: name });
+
+    if (!group || !group.users || group.users.length === 0) return;
+
+    const mentions = group.users.reduce((acc: string, user: IUser) => {
+      if (user.id === -1) {
+        acc += `${user.first_name} `
+      } else {
+        acc += `<a href="tg://user?id=${user.id}">${user.first_name}</a> `;
+      }
+      return acc;
+    }, "")
+
+    bot.sendMessage(msg.chat.id, mentions, {
+      reply_to_message_id: msg.message_id,
+      parse_mode: "HTML",
+    });
   }
 });
