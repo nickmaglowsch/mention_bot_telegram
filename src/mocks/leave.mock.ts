@@ -16,10 +16,7 @@ export const baseQuery = (args: CommandArgs) => [
     {
         $pull: {
             users: {
-                $or: [
-                    { "users.first_name": `@${args.whoSent}` },
-                    { "users.id": args.whoSent }
-                ]
+                $or: [{ first_name: `@${args.whoSent}` }, { id: args.whoSent }]
             }
         }
     },

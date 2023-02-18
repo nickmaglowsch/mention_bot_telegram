@@ -23,7 +23,7 @@ describe("Leave", () => {
         const result = await commandLeave.exec();
 
         // Assert
-        expect(result).toBe(`Você saiu do grupo *${args.name}*!`);
+        expect(result).toBe(`Você saiu do grupo ${args.name}!`);
         expect(mockLeaveSuccess()).toHaveBeenCalledWith(...baseQuery(args));
     });
 
@@ -33,7 +33,7 @@ describe("Leave", () => {
         const result = await commandLeave.exec();
 
         // Assert
-        expect(result).toBe(`Você não está no grupo *${args.name}* 🤔`);
+        expect(result).toBe(`Você não está no grupo ${args.name} 🤔`);
         expect(mockLeaveFail()).toHaveBeenCalledWith(...baseQuery(args));
     });
 
