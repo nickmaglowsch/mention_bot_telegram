@@ -41,6 +41,6 @@ bot.on("message", async (msg: TelegramBot.Message) => {
     const message = await command.exec();
     await bot.sendMessage(msg.chat.id, message, {
         reply_to_message_id: msg.message_id,
-        parse_mode: "Markdown"
+        parse_mode: "HTML"
     });
 });
