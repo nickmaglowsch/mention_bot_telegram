@@ -14,11 +14,18 @@ export class TelegramFactory {
     private readonly action: string;
     private readonly entities: TelegramBot.MessageEntity[] | undefined;
     private readonly chatId: number;
+    private readonly whoSent: string | number;
 
-    constructor(action: string, entities: TelegramBot.MessageEntity[] | undefined, chatId: number) {
+    constructor(
+        action: string,
+        entities: TelegramBot.MessageEntity[] | undefined,
+        chatId: number,
+        whoSent: string | number
+    ) {
         this.action = action;
         this.entities = entities;
         this.chatId = chatId;
+        this.whoSent = whoSent;
         this.handleAction();
     }
 
@@ -43,19 +50,22 @@ export class TelegramFactory {
         // add space in the end just in case
         const mentions = `${this.action} `.match(regex) || [];
 
-        return mentions.map(m => {
+        return mentions.map((m) => {
             return { id: -1, first_name: m } as IUser;
         });
     }
 
     private getDefaultUsersFromAction(): IUser[] {
-        return this.entities?.map(e => {
-            if (!e.user) return;
-            const { id, first_name } = e.user;
-            return { id, first_name } as IUser;
-        }).filter(e => !!e) as unknown as IUser[] || [];
+        return (
+            (this.entities
+                ?.map((e) => {
+                    if (!e.user) return;
+                    const { id, first_name } = e.user;
+                    return { id, first_name } as IUser;
+                })
+                .filter((e) => !!e) as unknown as IUser[]) || []
+        );
     }
-
 
     private handleAction() {
         if (this.action.startsWith(commandsText.CREATE)) {
@@ -73,7 +83,10 @@ export class TelegramFactory {
             const defaultUsers = this.getDefaultUsersFromAction();
 
             this.args = {
-                name: this.action.split(commandsText.ADD)[1]?.split(" ")[0].trim(),
+                name: this.action
+                    .split(commandsText.ADD)[1]
+                    ?.split(" ")[0]
+                    .trim(),
                 defaultUsers,
                 customUsers,
                 chatId: this.chatId

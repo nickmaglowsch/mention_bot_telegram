@@ -1,10 +1,10 @@
 import { CommandsNames } from "./interfaces/commands";
-import { TelegramFactory } from "./factory";
 import TelegramBot from "node-telegram-bot-api";
+import { baseFactory } from "./mocks/factory.mock";
 
 describe("TelegramFactory", () => {
     it("should build a Create command", () => {
-        const factory = new TelegramFactory("mb create group MyGroup", undefined, 123456);
+        const factory = baseFactory("mb create group MyGroup");
         const command = factory.build();
 
         expect(command.name).toEqual(CommandsNames.CREATE);
@@ -22,8 +22,8 @@ describe("TelegramFactory", () => {
                     id: 1,
                     is_bot: false,
                     first_name: "User",
-                    username: "user1",
-                },
+                    username: "user1"
+                }
             },
             {
                 type: "text_mention",
@@ -33,11 +33,14 @@ describe("TelegramFactory", () => {
                     id: 2,
                     is_bot: false,
                     first_name: "User",
-                    username: "user2",
-                },
-            },
+                    username: "user2"
+                }
+            }
         ];
-        const factory = new TelegramFactory("mb add MyGroup @custom1 @custom2", entities, 123456);
+        const factory = baseFactory(
+            "mb add MyGroup @custom1 @custom2",
+            entities
+        );
         const command = factory.build();
 
         expect(command.name).toEqual(CommandsNames.ADD);
@@ -48,7 +51,7 @@ describe("TelegramFactory", () => {
     });
 
     it("should build a Mention command", () => {
-        const factory = new TelegramFactory("@MyGroup", undefined, 123456);
+        const factory = baseFactory("@MyGroup");
         const command = factory.build();
 
         expect(command.name).toEqual(CommandsNames.MENTION);
@@ -56,9 +59,8 @@ describe("TelegramFactory", () => {
         expect(command.args.chatId).toEqual(123456);
     });
 
-
     it("should build a Delete command", () => {
-        const factory = new TelegramFactory("mb delete group MyGroup", undefined, 123456);
+        const factory = baseFactory("mb delete group MyGroup");
         const command = factory.build();
 
         expect(command.name).toEqual(CommandsNames.DELETE);
@@ -67,7 +69,7 @@ describe("TelegramFactory", () => {
     });
 
     it("should throw an error for an invalid command", () => {
-        const factory = new TelegramFactory("mb invalid command", undefined, 123456);
+        const factory = baseFactory("mb invalid command");
 
         expect(() => {
             factory.build();
