@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "jest --maxWorkers=7 --silent",
+    "test:verbose": "jest --maxWorkers=7 --verbose",
     "build": "npx tsc",
     "start": "node dist/index.js",
     "start:dev": "npx ts-node src/index.ts",
