@@ -15,6 +15,7 @@ export class Add implements Commands {
     }
 
     async exec(): Promise<string> {
+
         const { name, chatId } = this.args;
         const defaultUsers = this.args.defaultUsers ? this.args.defaultUsers : [];
         const customUsers = this.args.customUsers ? this.args.customUsers : [];
