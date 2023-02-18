@@ -56,6 +56,16 @@ describe("TelegramFactory", () => {
         expect(command.args.chatId).toEqual(123456);
     });
 
+
+    it("should build a Delete command", () => {
+        const factory = new TelegramFactory("mb delete group MyGroup", undefined, 123456);
+        const command = factory.build();
+
+        expect(command.name).toEqual(CommandsNames.DELETE);
+        expect(command.args.name).toEqual("MyGroup");
+        expect(command.args.chatId).toEqual(123456);
+    });
+
     it("should throw an error for an invalid command", () => {
         const factory = new TelegramFactory("mb invalid command", undefined, 123456);
 
