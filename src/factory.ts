@@ -4,6 +4,7 @@ import { Commands, CommandsNames, commandsText } from "./interfaces/commands";
 import { Create } from "./commands/create";
 import { Add } from "./commands/add";
 import { Mention } from "./commands/mention";
+import { Delete } from "./commands/delete";
 import { CommandArgs } from "./interfaces/commandArgs";
 
 
@@ -29,14 +30,15 @@ export class TelegramFactory {
             return new Add(this.args);
         case CommandsNames.MENTION:
             return new Mention(this.args);
+        case CommandsNames.DELETE:
+            return new Delete(this.args);
         default:
             throw new Error("INVALID COMMAND");
-            break;
         }
     }
 
     private getCustomUsersFromAction(): IUser[] {
-    // special case for users with custom username (aka @username)
+        // special case for users with custom username (aka @username)
         const regex = /@(\S+)(?=\s)/g;
         // add space in the end just in case
         const mentions = `${this.action} `.match(regex) || [];
@@ -83,6 +85,15 @@ export class TelegramFactory {
             this.command = CommandsNames.MENTION;
             this.args = {
                 name: this.action.split("@")[1].trim(),
+                chatId: this.chatId
+            };
+            return;
+        }
+
+        if (this.action.startsWith(commandsText.DELETE)) {
+            this.command = CommandsNames.DELETE;
+            this.args = {
+                name: this.action.split(commandsText.DELETE)[1]?.trim(),
                 chatId: this.chatId
             };
             return;
