@@ -1,37 +1,39 @@
-name: Deploy to GCP Compute Engine
+name: GCP
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   deploy:
+    name: Setup Gcloud Account
     runs-on: ubuntu-latest
+    environment: hw-prod
+    env:
+      IMAGE_NAME: gcr.io/${{ secrets.GCP_PROJECT_ID }}/site:latest
     steps:
-      - name: Checkout code
+      # Git checkout
+      - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build app
-        run: npm run start
-
-      - name: Copy files to GCP Compute Engine
-        uses: google-github-actions/scp@master
+      # Login to GCP
+      - uses: google-github-actions/setup-gcloud@v0.2.0
         with:
-          key: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
-          src: '.'
-          dest: 'nickmaglowsch3@35.223.186.8:/~/app'
+          service_account_key: ${{ secrets.GCP_CREDENTIALS }}
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
 
-      - name: SSH into GCP Compute Engine and start app
-        uses: appleboy/ssh-action@master
-        with:
-          host: '35.223.186.8'
-          username: 'nickmaglowsch3'
-          password: ${{ secrets.GCP_COMPUTE_ENGINE_PASSWORD }}
-          script: |
-            cd ~/app
-            npm install
-            NODE_ENV=production nohup npm start > app.log 2>&1 &
+      # gcloud configure docker
+      - name: Configure Docker
+        run: gcloud auth configure-docker --quiet
 
+      # build image
+      - name: Build Docker image
+        run: docker build -t $IMAGE_NAME .
+
+      # push image to registry
+      - name: Push Docker image
+        run: docker push $IMAGE_NAME
+
+      # deploy image
+      - name: Deploy Docker image
+        run: gcloud run deploy site --image $IMAGE_NAME --region us-central1 --memory 128Mi --min-instances 0 --max-instances 1 --platform managed --port 80 --allow-unauthenticated
