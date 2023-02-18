@@ -68,6 +68,15 @@ describe("TelegramFactory", () => {
         expect(command.args.chatId).toEqual(123456);
     });
 
+    it("should build a Leave command", () => {
+        const factory = baseFactory("mb leave MyGroup");
+        const command = factory.build();
+
+        expect(command.name).toEqual(CommandsNames.LEAVE);
+        expect(command.args.name).toEqual("MyGroup");
+        expect(command.args.chatId).toEqual(123456);
+    });
+
     it("should throw an error for an invalid command", () => {
         const factory = baseFactory("mb invalid command");
 

@@ -5,8 +5,8 @@ import { Create } from "./commands/create";
 import { Add } from "./commands/add";
 import { Mention } from "./commands/mention";
 import { Delete } from "./commands/delete";
+import { Leave } from "./commands/leave";
 import { CommandArgs } from "./interfaces/commandArgs";
-
 
 export class TelegramFactory {
     private command: CommandsNames | undefined;
@@ -31,16 +31,18 @@ export class TelegramFactory {
 
     build(): Commands {
         switch (this.command) {
-        case CommandsNames.CREATE:
-            return new Create(this.args);
-        case CommandsNames.ADD:
-            return new Add(this.args);
-        case CommandsNames.MENTION:
-            return new Mention(this.args);
-        case CommandsNames.DELETE:
-            return new Delete(this.args);
-        default:
-            throw new Error("INVALID COMMAND");
+            case CommandsNames.CREATE:
+                return new Create(this.args);
+            case CommandsNames.ADD:
+                return new Add(this.args);
+            case CommandsNames.MENTION:
+                return new Mention(this.args);
+            case CommandsNames.DELETE:
+                return new Delete(this.args);
+            case CommandsNames.LEAVE:
+                return new Leave(this.args);
+            default:
+                throw new Error("INVALID COMMAND");
         }
     }
 
@@ -111,6 +113,15 @@ export class TelegramFactory {
             };
             return;
         }
-    }
 
+        if (this.action.startsWith(commandsText.LEAVE)) {
+            this.command = CommandsNames.LEAVE;
+            this.args = {
+                name: this.action.split(commandsText.LEAVE)[1]?.trim(),
+                chatId: this.chatId,
+                whoSent: this.whoSent
+            };
+            return;
+        }
+    }
 }

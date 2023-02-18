@@ -10,14 +10,16 @@ export enum CommandsNames {
     CREATE = "create",
     ADD = "add",
     MENTION = "mention",
-    DELETE = "delete"
+    DELETE = "delete",
+    LEAVE = "leave"
 }
 
 export const commandsText = {
     MENTION: "@",
     ADD: "mb add ",
     CREATE: "mb create group ",
-    DELETE: "mb delete group "
+    DELETE: "mb delete group ",
+    LEAVE: "mb leave "
 };
 
 export const adminCommands = [
