@@ -1,4 +1,4 @@
-import {CommandArgs} from "./commandArgs";
+import { CommandArgs } from "./commandArgs";
 
 export interface Commands {
     name: CommandsNames;
@@ -7,18 +7,18 @@ export interface Commands {
 }
 
 export enum CommandsNames {
-    CREATE = 'create',
-    ADD = 'add',
-    MENTION = 'mention'
+    CREATE = "create",
+    ADD = "add",
+    MENTION = "mention"
 }
 
 export const commandsText = {
-    MENTION: '@',
-    ADD: 'mb add ',
-    CREATE: 'mb create group '
-}
+    MENTION: "@",
+    ADD: "mb add ",
+    CREATE: "mb create group "
+};
 
 export const adminCommands = [
     commandsText.ADD,
     commandsText.CREATE,
-]
+];

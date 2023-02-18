@@ -1,11 +1,14 @@
 import TelegramBot from "node-telegram-bot-api";
 import mongoose from "mongoose";
-import {TelegramFactory} from "./factory";
-import {isCommand, isUserAllowedToUseCommand} from "./utils";
-require('dotenv').config()
-const logger = require('pino')()
-const token = process.env.TOKEN || '';
-const uri = process.env.DATABASE_URL || '';
+import { TelegramFactory } from "./factory";
+import { isCommand, isUserAllowedToUseCommand } from "./utils";
+import pino from "pino";
+import dotenv from "dotenv";
+
+dotenv.config();
+const logger = pino();
+const token = process.env.TOKEN || "";
+const uri = process.env.DATABASE_URL || "";
 mongoose
     .connect(uri)
     .then(() => logger.info("Connected to database"))
@@ -13,22 +16,22 @@ mongoose
         logger.info("Failed to connect to database");
         logger.info(err);
     });
-const bot = new TelegramBot(token, {polling: true});
+const bot = new TelegramBot(token, { polling: true });
 bot.on("message",
     async (msg: TelegramBot.Message) => {
         if (!msg.text) return;
         const text = msg.text;
-        logger.info(msg)
+        logger.info(msg);
         if (!await isUserAllowedToUseCommand(msg.from?.id, bot, msg.chat.id, text)) {
-            await bot.sendMessage(msg.chat.id, `admin only command`, {
+            await bot.sendMessage(msg.chat.id, "admin only command", {
                 reply_to_message_id: msg.message_id,
             });
             return;
         }
         if (!isCommand(text)) return;
-        const factory = new TelegramFactory(text, msg?.entities, msg.chat.id)
-        const command = factory.build()
-        const message = await command.exec()
+        const factory = new TelegramFactory(text, msg?.entities, msg.chat.id);
+        const command = factory.build();
+        const message = await command.exec();
         await bot.sendMessage(msg.chat.id, message, {
             reply_to_message_id: msg.message_id,
             parse_mode: "HTML"
