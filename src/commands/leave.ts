@@ -13,12 +13,6 @@ export class Leave implements Commands {
 
     async exec(): Promise<string> {
         const { chatId, name, whoSent } = this.args;
-        const orCondition = {
-            $or: [
-                { "users.first_name": `@${whoSent}` },
-                { "users.id": whoSent }
-            ]
-        };
 
         if (!whoSent) {
             return "Usuário não encontrado!";
@@ -29,16 +23,28 @@ export class Leave implements Commands {
                 {
                     groupId: chatId,
                     name: name,
-                    ...orCondition
+                    $or: [
+                        { "users.first_name": `@${whoSent}` },
+                        { "users.id": whoSent }
+                    ]
                 },
-                { $pull: { users: { ...orCondition } } },
+                {
+                    $pull: {
+                        users: {
+                            $or: [
+                                { first_name: `@${whoSent}` },
+                                { id: whoSent }
+                            ]
+                        }
+                    }
+                },
                 { new: true }
             );
 
             if (updatedInfo.modifiedCount > 0) {
-                return `Você saiu do grupo *${name}*!`;
+                return `Você saiu do grupo ${name}!`;
             } else {
-                return `Você não está no grupo *${name}* 🤔`;
+                return `Você não está no grupo ${name} 🤔`;
             }
         } catch (error) {
             return `${error}`;
