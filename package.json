@@ -6,7 +6,7 @@
   "scripts": {
     "test": "jest --maxWorkers=7 --silent",
     "build": "npx tsc",
-    "start": "npm run buld && node dist/index.js",
+    "start": "npm run build && node dist/index.js",
     "start:dev": "ts-node src/index.ts",
     "prepush": "npm run test",
     "lint": "eslint '**/*.ts'",
