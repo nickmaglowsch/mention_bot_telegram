@@ -14,9 +14,9 @@ export class Help implements Commands {
     async exec(): Promise<string> {
         return (Object.keys(commandsText) as CommandsNames[])
             .reduce((acc, cmd) => {
-                acc += `<code>${commandsText[cmd]}</code> - ${commandsTextDescription[cmd]}${adminDescription(cmd)}\n\n`;
+                acc += `<code>${commandsText[cmd]}</code> ${commandsTextDescription[cmd]}${adminDescription(cmd)}\n\n`;
                 return acc;
-            }, "");
+            }, "") + "\n\n Para todos os comandos, basta remover os <> e colocar as informações pedidas em seu lugar!";
     }
 
 }
