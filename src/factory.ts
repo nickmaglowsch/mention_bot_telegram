@@ -6,6 +6,7 @@ import { Add } from "./commands/add";
 import { Mention } from "./commands/mention";
 import { Delete } from "./commands/delete";
 import { Leave } from "./commands/leave";
+import { Remove } from "./commands/remove";
 import { CommandArgs } from "./interfaces/commandArgs";
 
 export class TelegramFactory {
@@ -41,6 +42,8 @@ export class TelegramFactory {
                 return new Delete(this.args);
             case CommandsNames.LEAVE:
                 return new Leave(this.args);
+            case CommandsNames.REMOVE:
+                return new Remove(this.args);
             default:
                 throw new Error("INVALID COMMAND");
         }
@@ -87,6 +90,23 @@ export class TelegramFactory {
             this.args = {
                 name: this.action
                     .split(commandsText.ADD)[1]
+                    ?.split(" ")[0]
+                    .trim(),
+                defaultUsers,
+                customUsers,
+                chatId: this.chatId
+            };
+            return;
+        }
+
+        if (this.action.startsWith(commandsText.REMOVE)) {
+            this.command = CommandsNames.REMOVE;
+            const customUsers = this.getCustomUsersFromAction();
+            const defaultUsers = this.getDefaultUsersFromAction();
+
+            this.args = {
+                name: this.action
+                    .split(commandsText.REMOVE)[1]
                     ?.split(" ")[0]
                     .trim(),
                 defaultUsers,

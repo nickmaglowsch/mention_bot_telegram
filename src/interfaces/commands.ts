@@ -11,7 +11,8 @@ export enum CommandsNames {
     ADD = "add",
     MENTION = "mention",
     DELETE = "delete",
-    LEAVE = "leave"
+    LEAVE = "leave",
+    REMOVE = "remove"
 }
 
 export const commandsText = {
@@ -19,11 +20,13 @@ export const commandsText = {
     ADD: "mb add ",
     CREATE: "mb create group ",
     DELETE: "mb delete group ",
-    LEAVE: "mb leave "
+    LEAVE: "mb leave ",
+    REMOVE: "mb remove "
 };
 
 export const adminCommands = [
     commandsText.ADD,
     commandsText.CREATE,
-    commandsText.DELETE
+    commandsText.DELETE,
+    commandsText.REMOVE
 ];
