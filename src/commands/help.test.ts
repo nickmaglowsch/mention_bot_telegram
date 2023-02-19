@@ -1,4 +1,4 @@
-import { Help } from "./Help";
+import { Help } from "./help";
 import { CommandsNames, commandsText, commandsTextDescription } from "../interfaces/commands";
 import { adminDescription } from "../utils";
 
