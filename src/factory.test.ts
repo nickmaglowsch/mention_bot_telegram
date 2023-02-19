@@ -115,6 +115,12 @@ describe("TelegramFactory", () => {
         expect(cmd.args.customUsers).toHaveLength(2);
     });
 
+    it("should build a Help command", () => {
+        const factory = baseFactory("mb help");
+        const command = factory.build();
+
+        expect(command.name).toEqual(CommandsNames.HELP);
+    });
 
     it("should throw an error for an invalid command", () => {
         const factory = baseFactory("mb invalid command");

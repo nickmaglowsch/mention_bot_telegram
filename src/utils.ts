@@ -1,5 +1,5 @@
 import TelegramBot from "node-telegram-bot-api";
-import { adminCommands, commandsText } from "./interfaces/commands";
+import { adminCommands, CommandsNames, commandsText } from "./interfaces/commands";
 
 export async function isUserAllowedToUseCommand(userId: number | undefined,  bot: TelegramBot, chatId: number, text: string): Promise<boolean> {
     if (!userId) return false;
@@ -14,4 +14,14 @@ export async function isUserAllowedToUseCommand(userId: number | undefined,  bot
 export function isCommand(text: string) {
     const commands = Object.values(commandsText);
     return commands.some((cmd) => text.includes(cmd));
+}
+
+export function adminDescription(cmd: CommandsNames) {
+    if (isAdminCommand(cmd)) return " - comando para admin";
+
+    return "";
+}
+
+export function isAdminCommand(cmd: CommandsNames) {
+    return adminCommands.some((word) => commandsText[cmd].includes(word));
 }
