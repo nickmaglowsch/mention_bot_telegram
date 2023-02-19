@@ -16,7 +16,7 @@ export class Help implements Commands {
             .reduce((acc, cmd) => {
                 acc += `<code>${commandsText[cmd]}</code> ${commandsTextDescription[cmd]}${adminDescription(cmd)}\n\n`;
                 return acc;
-            }, "") + "\n\n Para todos os comandos, basta remover os <> e colocar as informações pedidas em seu lugar!";
+            }, "") + "Para todos os comandos, basta remover os &lt;&gt; e colocar as informações pedidas em seu lugar!";
     }
 
 }
