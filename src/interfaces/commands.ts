@@ -7,12 +7,13 @@ export interface Commands {
 }
 
 export enum CommandsNames {
-    CREATE = "create",
-    ADD = "add",
-    MENTION = "mention",
-    DELETE = "delete",
-    LEAVE = "leave",
-    REMOVE = "remove"
+    CREATE = "CREATE",
+    ADD = "ADD",
+    MENTION = "MENTION",
+    DELETE = "DELETE",
+    LEAVE = "LEAVE",
+    REMOVE = "REMOVE",
+    HELP = "HELP",
 }
 
 export const commandsText = {
@@ -21,7 +22,8 @@ export const commandsText = {
     CREATE: "mb create group ",
     DELETE: "mb delete group ",
     LEAVE: "mb leave ",
-    REMOVE: "mb remove "
+    REMOVE: "mb remove ",
+    HELP: "mb help"
 };
 
 export const adminCommands = [
@@ -30,3 +32,13 @@ export const adminCommands = [
     commandsText.DELETE,
     commandsText.REMOVE
 ];
+
+export const commandsTextDescription = {
+    MENTION: "marca todos do grupo mencionado",
+    ADD: "adiciona pessoas no grupo passando pessoas como argumento",
+    CREATE: "cria um novo grupo passando o nome como argumento",
+    DELETE: "deleta grupo passando o nome como argumento",
+    LEAVE: "sai do grupo passando o nome como argumento}",
+    REMOVE: "remove pessoa do grupo passando o nome como argumento e a pessoa",
+    HELP: "mostra essa lista"
+};

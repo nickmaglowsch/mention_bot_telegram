@@ -8,6 +8,7 @@ import { Delete } from "./commands/delete";
 import { Leave } from "./commands/leave";
 import { Remove } from "./commands/remove";
 import { CommandArgs } from "./interfaces/commandArgs";
+import { Help } from "./commands/help";
 
 export class TelegramFactory {
     private command: CommandsNames | undefined;
@@ -44,6 +45,8 @@ export class TelegramFactory {
                 return new Leave(this.args);
             case CommandsNames.REMOVE:
                 return new Remove(this.args);
+            case CommandsNames.HELP:
+                return new Help();
             default:
                 throw new Error("INVALID COMMAND");
         }
@@ -73,23 +76,23 @@ export class TelegramFactory {
     }
 
     private handleAction() {
-        if (this.action.startsWith(commandsText.CREATE)) {
+        if (this.action.startsWith(commandsText[CommandsNames.CREATE])) {
             this.command = CommandsNames.CREATE;
             this.args = {
-                name: this.action.split(commandsText.CREATE)[1]?.trim(),
+                name: this.action.split(commandsText[CommandsNames.CREATE])[1]?.trim(),
                 chatId: this.chatId
             };
             return;
         }
 
-        if (this.action.startsWith(commandsText.ADD)) {
+        if (this.action.startsWith(commandsText[CommandsNames.ADD])) {
             this.command = CommandsNames.ADD;
             const customUsers = this.getCustomUsersFromAction();
             const defaultUsers = this.getDefaultUsersFromAction();
 
             this.args = {
                 name: this.action
-                    .split(commandsText.ADD)[1]
+                    .split(commandsText[CommandsNames.ADD])[1]
                     ?.split(" ")[0]
                     .trim(),
                 defaultUsers,
@@ -99,14 +102,14 @@ export class TelegramFactory {
             return;
         }
 
-        if (this.action.startsWith(commandsText.REMOVE)) {
+        if (this.action.startsWith(commandsText[CommandsNames.REMOVE])) {
             this.command = CommandsNames.REMOVE;
             const customUsers = this.getCustomUsersFromAction();
             const defaultUsers = this.getDefaultUsersFromAction();
 
             this.args = {
                 name: this.action
-                    .split(commandsText.REMOVE)[1]
+                    .split(commandsText[CommandsNames.REMOVE])[1]
                     ?.split(" ")[0]
                     .trim(),
                 defaultUsers,
@@ -116,7 +119,7 @@ export class TelegramFactory {
             return;
         }
 
-        if (this.action.includes(commandsText.MENTION)) {
+        if (this.action.includes(commandsText[CommandsNames.MENTION])) {
             this.command = CommandsNames.MENTION;
             this.args = {
                 name: this.action.split("@")[1].trim(),
@@ -125,22 +128,27 @@ export class TelegramFactory {
             return;
         }
 
-        if (this.action.startsWith(commandsText.DELETE)) {
+        if (this.action.startsWith(commandsText[CommandsNames.DELETE])) {
             this.command = CommandsNames.DELETE;
             this.args = {
-                name: this.action.split(commandsText.DELETE)[1]?.trim(),
+                name: this.action.split(commandsText[CommandsNames.DELETE])[1]?.trim(),
                 chatId: this.chatId
             };
             return;
         }
 
-        if (this.action.startsWith(commandsText.LEAVE)) {
+        if (this.action.startsWith(commandsText[CommandsNames.LEAVE])) {
             this.command = CommandsNames.LEAVE;
             this.args = {
-                name: this.action.split(commandsText.LEAVE)[1]?.trim(),
+                name: this.action.split(commandsText[CommandsNames.LEAVE])[1]?.trim(),
                 chatId: this.chatId,
                 whoSent: this.whoSent
             };
+            return;
+        }
+
+        if (this.action.startsWith(commandsText[CommandsNames.HELP])) {
+            this.command = CommandsNames.HELP;
             return;
         }
     }

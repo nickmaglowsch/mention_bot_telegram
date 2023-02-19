@@ -1,5 +1,6 @@
 import TelegramBot from "node-telegram-bot-api";
-import { isUserAllowedToUseCommand, isCommand } from "./utils";
+import { isUserAllowedToUseCommand, isCommand, isAdminCommand, adminDescription } from "./utils";
+import { CommandsNames } from "./interfaces/commands";
 
 describe("utils", () => {
     describe("isUserAllowedToUseCommand", () => {
@@ -55,6 +56,26 @@ describe("utils", () => {
             const text = "some text";
             const result = isCommand(text);
             expect(result).toBe(false);
+        });
+    });
+
+    describe("isAdminCommand", () => {
+        it("should return true if a admin command is passed", function () {
+            expect(isAdminCommand(CommandsNames.DELETE)).toBeTruthy();
+        });
+
+        it("should return false if a not admin command is passed", function () {
+            expect(isAdminCommand(CommandsNames.MENTION)).toBeFalsy();
+        });
+    });
+
+    describe("adminDescription", () => {
+        it("should return \" - comando para admin\" if a admin command is passed", function () {
+            expect(adminDescription(CommandsNames.DELETE)).toBe(" - comando para admin");
+        });
+
+        it("should return empty string if a not admin command is passed", function () {
+            expect(adminDescription(CommandsNames.MENTION)).toBe("");
         });
     });
 });
