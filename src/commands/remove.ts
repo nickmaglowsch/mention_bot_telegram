@@ -42,7 +42,7 @@ export class Remove implements Commands {
 
             await group.save();
 
-            return "removido!";
+            return "Removido!";
         } catch (error) {
             return `${error}`;
         }

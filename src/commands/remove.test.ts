@@ -42,7 +42,7 @@ describe("Remove command", () => {
         const command = new Remove({ name, chatId, defaultUsers: removeUsers });
         const result = await command.exec();
 
-        expect(result).toEqual("removido!");
+        expect(result).toEqual("Removido!");
         expect(Group.findOne).toHaveBeenCalledWith({ groupId: chatId, name });
         expect(group.save).toHaveBeenCalled();
         expect(group.users).toEqual(newUsers);
