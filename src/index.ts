@@ -37,12 +37,15 @@ bot.on("message", async (msg: TelegramBot.Message) => {
         msg.chat.id,
         msg.from?.username || msg.from?.id || ""
     );
-    const command = factory.build();
-    const message = await command.exec();
-
-    if (message)
-        await bot.sendMessage(msg.chat.id, message, {
-            reply_to_message_id: msg.message_id,
-            parse_mode: "HTML"
-        });
+    try {
+        const command = factory.build();
+        const message = await command.exec();
+        if (message)
+            await bot.sendMessage(msg.chat.id, message, {
+                reply_to_message_id: msg.message_id,
+                parse_mode: "HTML"
+            });
+    } catch (e) {
+        logger.error(e);
+    }
 });
