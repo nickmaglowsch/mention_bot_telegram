@@ -34,11 +34,11 @@ export const adminCommands = [
 ];
 
 export const commandsTextDescription = {
-    MENTION: "<nome da grupo> - marca todos do grupo mencionado",
-    ADD: "<nome do grupo> <@ das pessoas> - adiciona pessoas num grupo",
-    CREATE: "<nome do grupo> - cria um novo grupo",
-    DELETE: "<nome do grupo>  - deleta um grupo",
-    LEAVE: "<nome do grupo> - serve para você sair de um grupo",
-    REMOVE: "<nome do grupo> <@ da pessoa>  - remove alguém de um grupo",
+    MENTION: "&lt;nome da grupo&gt; - marca todos do grupo mencionado",
+    ADD: "&lt;nome do grupo&gt; &lt;@ das pessoas&gt; - adiciona pessoas num grupo",
+    CREATE: "&lt;nome do grupo&gt; - cria um novo grupo",
+    DELETE: "&lt;nome do grupo&gt;  - deleta um grupo",
+    LEAVE: "&lt;nome do grupo&gt; - serve para você sair de um grupo",
+    REMOVE: "&lt;nome do grupo&gt; &lt;@ da pessoa&gt;  - remove alguém de um grupo",
     HELP: "mostra essa lista"
 };
