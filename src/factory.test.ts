@@ -77,6 +77,45 @@ describe("TelegramFactory", () => {
         expect(command.args.chatId).toEqual(123456);
     });
 
+    it("should build an Remove command with default and custom users", () => {
+        const entities: TelegramBot.MessageEntity[] = [
+            {
+                type: "text_mention",
+                offset: 0,
+                length: 9,
+                user: {
+                    id: 1,
+                    is_bot: false,
+                    first_name: "User",
+                    username: "user1"
+                }
+            },
+            {
+                type: "text_mention",
+                offset: 10,
+                length: 9,
+                user: {
+                    id: 2,
+                    is_bot: false,
+                    first_name: "User",
+                    username: "user2"
+                }
+            }
+        ];
+        const factory = baseFactory(
+            "mb remove MyGroup @custom1 @custom2",
+            entities
+        );
+        const cmd = factory.build();
+
+        expect(cmd.name).toEqual(CommandsNames.REMOVE);
+        expect(cmd.args.name).toEqual("MyGroup");
+        expect(cmd.args.chatId).toEqual(123456);
+        expect(cmd.args.defaultUsers).toHaveLength(2);
+        expect(cmd.args.customUsers).toHaveLength(2);
+    });
+
+
     it("should throw an error for an invalid command", () => {
         const factory = baseFactory("mb invalid command");
 
