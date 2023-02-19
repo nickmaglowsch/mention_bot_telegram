@@ -1,7 +1,7 @@
 {
   "name": "mentions-bot",
   "version": "1.0.0",
-  "description": "",
+  "description": "Telegram bot that create alias for bulk mentioning people inside a group",
   "main": "index.js",
   "scripts": {
     "test": "jest --maxWorkers=7 --silent",
