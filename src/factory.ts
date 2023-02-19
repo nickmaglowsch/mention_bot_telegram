@@ -79,7 +79,7 @@ export class TelegramFactory {
         if (this.action.startsWith(commandsText[CommandsNames.CREATE])) {
             this.command = CommandsNames.CREATE;
             this.args = {
-                name: this.action.split(commandsText[CommandsNames.CREATE])[1]?.trim(),
+                name: this.action.split(commandsText[CommandsNames.CREATE])[1]?.trim().toLowerCase(),
                 chatId: this.chatId
             };
             return;
@@ -94,7 +94,7 @@ export class TelegramFactory {
                 name: this.action
                     .split(commandsText[CommandsNames.ADD])[1]
                     ?.split(" ")[0]
-                    .trim(),
+                    .trim().toLowerCase(),
                 defaultUsers,
                 customUsers,
                 chatId: this.chatId
@@ -111,7 +111,7 @@ export class TelegramFactory {
                 name: this.action
                     .split(commandsText[CommandsNames.REMOVE])[1]
                     ?.split(" ")[0]
-                    .trim(),
+                    .trim().toLowerCase(),
                 defaultUsers,
                 customUsers,
                 chatId: this.chatId
@@ -122,7 +122,7 @@ export class TelegramFactory {
         if (this.action.includes(commandsText[CommandsNames.MENTION])) {
             this.command = CommandsNames.MENTION;
             this.args = {
-                name: this.action.split("@")[1].trim(),
+                name: this.action.split("@")[1].trim().toLowerCase(),
                 chatId: this.chatId
             };
             return;
@@ -131,7 +131,7 @@ export class TelegramFactory {
         if (this.action.startsWith(commandsText[CommandsNames.DELETE])) {
             this.command = CommandsNames.DELETE;
             this.args = {
-                name: this.action.split(commandsText[CommandsNames.DELETE])[1]?.trim(),
+                name: this.action.split(commandsText[CommandsNames.DELETE])[1]?.trim().toLowerCase(),
                 chatId: this.chatId
             };
             return;
@@ -140,7 +140,7 @@ export class TelegramFactory {
         if (this.action.startsWith(commandsText[CommandsNames.LEAVE])) {
             this.command = CommandsNames.LEAVE;
             this.args = {
-                name: this.action.split(commandsText[CommandsNames.LEAVE])[1]?.trim(),
+                name: this.action.split(commandsText[CommandsNames.LEAVE])[1]?.trim().toLowerCase(),
                 chatId: this.chatId,
                 whoSent: this.whoSent
             };

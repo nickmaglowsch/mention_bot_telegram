@@ -8,7 +8,7 @@ describe("TelegramFactory", () => {
         const command = factory.build();
 
         expect(command.name).toEqual(CommandsNames.CREATE);
-        expect(command.args.name).toEqual("MyGroup");
+        expect(command.args.name).toEqual("mygroup");
         expect(command.args.chatId).toEqual(123456);
     });
 
@@ -44,7 +44,7 @@ describe("TelegramFactory", () => {
         const command = factory.build();
 
         expect(command.name).toEqual(CommandsNames.ADD);
-        expect(command.args.name).toEqual("MyGroup");
+        expect(command.args.name).toEqual("mygroup");
         expect(command.args.chatId).toEqual(123456);
         expect(command.args.defaultUsers).toHaveLength(2);
         expect(command.args.customUsers).toHaveLength(2);
@@ -55,7 +55,7 @@ describe("TelegramFactory", () => {
         const command = factory.build();
 
         expect(command.name).toEqual(CommandsNames.MENTION);
-        expect(command.args.name).toEqual("MyGroup");
+        expect(command.args.name).toEqual("mygroup");
         expect(command.args.chatId).toEqual(123456);
     });
 
@@ -64,7 +64,7 @@ describe("TelegramFactory", () => {
         const command = factory.build();
 
         expect(command.name).toEqual(CommandsNames.DELETE);
-        expect(command.args.name).toEqual("MyGroup");
+        expect(command.args.name).toEqual("mygroup");
         expect(command.args.chatId).toEqual(123456);
     });
 
@@ -73,7 +73,7 @@ describe("TelegramFactory", () => {
         const command = factory.build();
 
         expect(command.name).toEqual(CommandsNames.LEAVE);
-        expect(command.args.name).toEqual("MyGroup");
+        expect(command.args.name).toEqual("mygroup");
         expect(command.args.chatId).toEqual(123456);
     });
 
@@ -109,7 +109,7 @@ describe("TelegramFactory", () => {
         const cmd = factory.build();
 
         expect(cmd.name).toEqual(CommandsNames.REMOVE);
-        expect(cmd.args.name).toEqual("MyGroup");
+        expect(cmd.args.name).toEqual("mygroup");
         expect(cmd.args.chatId).toEqual(123456);
         expect(cmd.args.defaultUsers).toHaveLength(2);
         expect(cmd.args.customUsers).toHaveLength(2);
