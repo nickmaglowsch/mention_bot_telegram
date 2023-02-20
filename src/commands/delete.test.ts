@@ -1,12 +1,24 @@
 import { Delete } from "./delete";
 import Group from "../models/group";
 import { CommandArgs } from "../interfaces/commandArgs";
+import { commandHandles, CommandsNames } from "../interfaces/commands";
 
 describe("Delete", () => {
     const args: CommandArgs = {
         name: "test-group",
         chatId: 123,
+        commandSpecialArgs: {
+            customUsers: [],
+            defaultUsers: []
+        },
+        whoSent: "sender"
     };
+
+    it("should registry command handle", function () {
+        Delete.registryCommand();
+
+        expect(commandHandles.get(CommandsNames.DELETE)).toBeTruthy();
+    });
 
     it(`should return "Grupo ${args.name} deletado!" when the group is successfully created`, async () => {
         const mockGroupDelete = jest.spyOn(Group, "deleteOne").mockResolvedValue({ acknowledged: true, deletedCount: 1 });

@@ -1,13 +1,14 @@
-import { Commands, CommandsNames } from "../interfaces/commands";
+import { commandHandles, Commands, CommandsNames } from "../interfaces/commands";
 import Group from "../models/group";
-import { CommandArgs } from "../interfaces/commandArgs";
+import { CommandArgs, ICommand } from "../interfaces/commandArgs";
 import { IUser } from "../models/user";
 
-export class Mention implements Commands {
+export class Mention extends Commands {
     name = CommandsNames.MENTION;
     args: CommandArgs;
 
     constructor(args: CommandArgs) {
+        super();
         this.args = args;
     }
 
@@ -28,5 +29,20 @@ export class Mention implements Commands {
             }
             return acc;
         }, "");
+    }
+
+    static registryCommand(): void {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        commandHandles.set(CommandsNames.MENTION, (args: any) => {
+            return {
+                command: CommandsNames.MENTION,
+                args: {
+                    name: args.action.split("@")[1].trim().toLowerCase(),
+                    chatId: args.chatId,
+                    whoSent: args.whoSent
+                }
+            } as ICommand;
+        });
     }
 }

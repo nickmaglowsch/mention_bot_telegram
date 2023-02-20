@@ -1,13 +1,42 @@
 import { Create } from "./create";
 import Group from "../models/group";
-import { CommandArgs } from "../interfaces/commandArgs";
+import { CommandArgs, ICommand } from "../interfaces/commandArgs";
+import { commandHandles, CommandsNames } from "../interfaces/commands";
 
 describe("Create", () => {
+
+    it("should registry command handle", function () {
+        Create.registryCommand();
+
+        const args = {
+            action: "",
+            name: "",
+            chatId: 1,
+            whoSent: ""
+        };
+
+        const fun = commandHandles.get(CommandsNames.CREATE) as (args: unknown) => ICommand;
+
+        expect(fun(args)).toStrictEqual({
+            args: {
+                chatId: 1,
+                name: "",
+                whoSent: ""
+            },
+            command: CommandsNames.CREATE
+        });
+    });
+
     it("should return \"created!\" when the group is successfully created", async () => {
     // Arrange
         const args: CommandArgs = {
             name: "test-group",
             chatId: 123,
+            commandSpecialArgs: {
+                customUsers: [],
+                defaultUsers: []
+            },
+            whoSent: "sender"
         };
         const mockGroupCreate = jest.spyOn(Group, "create").mockImplementation(() => Promise.resolve());
 
@@ -29,6 +58,11 @@ describe("Create", () => {
         const args: CommandArgs = {
             name: "test-group",
             chatId: 123,
+            commandSpecialArgs: {
+                customUsers: [],
+                defaultUsers: []
+            },
+            whoSent: "sender"
         };
         const mockGroupCreate = jest.spyOn(Group, "create").mockRejectedValue(new Error("Database query failed") as unknown as never);
 

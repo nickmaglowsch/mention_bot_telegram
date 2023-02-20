@@ -1,13 +1,14 @@
 import {
+    commandHandles,
     Commands,
     CommandsNames,
     commandsText,
     commandsTextDescription
 } from "../interfaces/commands";
-import { CommandArgs } from "../interfaces/commandArgs";
+import { CommandArgs, ICommand } from "../interfaces/commandArgs";
 import { adminDescription } from "../utils";
 
-export class Help implements Commands {
+export class Help extends Commands {
     name = CommandsNames.HELP;
     args: CommandArgs = {} as CommandArgs;
 
@@ -19,4 +20,13 @@ export class Help implements Commands {
             }, "") + "Para todos os comandos, basta remover os &lt;&gt; e colocar as informações pedidas em seu lugar!";
     }
 
+    static registryCommand(): void {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        commandHandles.set(CommandsNames.HELP, (_) => {
+            return {
+                command: CommandsNames.HELP,
+                args: {} as CommandArgs
+            } as ICommand;
+        });
+    }
 }

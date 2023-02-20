@@ -1,12 +1,13 @@
-import { Commands, CommandsNames } from "../interfaces/commands";
+import { commandHandles, Commands, CommandsNames } from "../interfaces/commands";
 import Group from "../models/group";
-import { CommandArgs } from "../interfaces/commandArgs";
+import { CommandArgs, ICommand } from "../interfaces/commandArgs";
 
-export class Create implements Commands {
+export class Create extends Commands {
     name = CommandsNames.CREATE;
     args: CommandArgs;
 
     constructor(args: CommandArgs) {
+        super();
         this.args = args;
     }
 
@@ -16,11 +17,26 @@ export class Create implements Commands {
             await Group.create({
                 groupId: chatId,
                 name: name,
-                users: [],
+                users: []
             });
             return "created!";
         } catch (error) {
             return `${error}`;
         }
+    }
+
+    static registryCommand(): void {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        commandHandles.set(CommandsNames.CREATE, (args: any) => {
+            return {
+                command: CommandsNames.CREATE,
+                args: {
+                    name: args.name.toLowerCase(),
+                    chatId: args.chatId,
+                    whoSent: args.whoSent
+                }
+            } as ICommand;
+        });
     }
 }

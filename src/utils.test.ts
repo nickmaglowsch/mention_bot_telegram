@@ -1,5 +1,11 @@
 import TelegramBot from "node-telegram-bot-api";
-import { isUserAllowedToUseCommand, isCommand, isAdminCommand, adminDescription } from "./utils";
+import {
+    isUserAllowedToUseCommand,
+    isCommand,
+    isAdminCommand,
+    adminDescription,
+    getDefaultUsersFromAction, getCustomUsersFromAction
+} from "./utils";
 import { CommandsNames } from "./interfaces/commands";
 
 describe("utils", () => {
@@ -76,6 +82,47 @@ describe("utils", () => {
 
         it("should return empty string if a not admin command is passed", function () {
             expect(adminDescription(CommandsNames.MENTION)).toBe("");
+        });
+    });
+
+    describe("getCustomUsersFromAction", () => {
+        it("should return an array with users containing custom usernames", () => {
+            const action = "Hello @user1 @user2";
+            const users = getCustomUsersFromAction(action);
+
+            expect(users).toEqual([
+                { id: -1, first_name: "@user1" },
+                { id: -1, first_name: "@user2" },
+            ]);
+        });
+
+        it("should return an empty array when there are no custom usernames in the action", () => {
+            const action = "Hello world!";
+            const users = getCustomUsersFromAction(action);
+
+            expect(users).toEqual([]);
+        });
+    });
+
+    describe("getDefaultUsersFromAction", () => {
+        it("should return an array with users from the message entities", () => {
+            const entities = [
+                { type: "mention", offset: 6, length: 6, user: { id: 123, first_name: "John" } },
+                { type: "mention", offset: 13, length: 7, user: { id: 456, first_name: "Alice" } },
+            ] as TelegramBot.MessageEntity[];
+            const users = getDefaultUsersFromAction(entities);
+
+            expect(users).toEqual([
+                { id: 123, first_name: "John" },
+                { id: 456, first_name: "Alice" },
+            ]);
+        });
+
+        it("should return an empty array when there are no users in the message entities", () => {
+            const entities = [] as TelegramBot.MessageEntity[];
+            const users = getDefaultUsersFromAction(entities);
+
+            expect(users).toEqual([]);
         });
     });
 });

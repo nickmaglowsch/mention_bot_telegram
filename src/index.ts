@@ -4,11 +4,16 @@ import { TelegramFactory } from "./factory";
 import { isCommand, isUserAllowedToUseCommand } from "./utils";
 import pino from "pino";
 import dotenv from "dotenv";
+import commands from "./commands";
+
+// register commands
+commands.forEach(command => command.registryCommand());
 
 dotenv.config();
 const logger = pino();
 const token = process.env.TOKEN || "";
 const uri = process.env.DATABASE_URL || "";
+
 mongoose
     .connect(uri)
     .then(() => logger.info("Connected to database"))
@@ -16,7 +21,9 @@ mongoose
         logger.info("Failed to connect to database");
         logger.info(err);
     });
+
 const bot = new TelegramBot(token, { polling: true });
+
 bot.on("message", async (msg: TelegramBot.Message) => {
     if (!msg.text) return;
     const text = msg.text;

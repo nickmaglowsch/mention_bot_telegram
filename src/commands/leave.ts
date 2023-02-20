@@ -1,13 +1,13 @@
-import { Commands, CommandsNames } from "../interfaces/commands";
+import { commandHandles, Commands, CommandsNames } from "../interfaces/commands";
 import Group from "../models/group";
-import { CommandArgs } from "../interfaces/commandArgs";
-import { assertLabeledStatement } from "@babel/types";
+import { CommandArgs, ICommand } from "../interfaces/commandArgs";
 
-export class Leave implements Commands {
+export class Leave extends Commands {
     name = CommandsNames.LEAVE;
     args: CommandArgs;
 
     constructor(args: CommandArgs) {
+        super();
         this.args = args;
     }
 
@@ -49,5 +49,20 @@ export class Leave implements Commands {
         } catch (error) {
             return `${error}`;
         }
+    }
+
+    static registryCommand(): void {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        commandHandles.set(CommandsNames.LEAVE, (args: any) => {
+            return {
+                command: CommandsNames.LEAVE,
+                args: {
+                    name: args.name.toLowerCase(),
+                    chatId: args.chatId,
+                    whoSent: args.whoSent
+                }
+            } as ICommand;
+        });
     }
 }

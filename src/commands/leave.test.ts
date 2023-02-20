@@ -1,11 +1,12 @@
 import { Leave } from "./leave";
-import { CommandArgs } from "../interfaces/commandArgs";
+import { CommandArgs, ICommand } from "../interfaces/commandArgs";
 import {
     baseQuery,
     mockLeaveSuccess,
     mockLeaveFail,
     mockDbError
 } from "../mocks/leave.mock";
+import { commandHandles, CommandsNames } from "../interfaces/commands";
 
 jest.setTimeout(1000000);
 
@@ -14,8 +15,33 @@ describe("Leave", () => {
         name: "test-group",
         chatId: 123,
         whoSent: "test-user",
-        defaultUsers: [{ id: -1, first_name: "@test-user" }]
+        commandSpecialArgs: {
+            customUsers: [],
+            defaultUsers: [ { id: -1, first_name: "@test-user" } ]
+        }
     };
+
+    it("should registry command handle", function () {
+        Leave.registryCommand();
+
+        const args = {
+            action: "",
+            name: "",
+            chatId: 1,
+            whoSent: ""
+        };
+
+        const fun = commandHandles.get(CommandsNames.LEAVE) as (args: unknown) => ICommand;
+
+        expect(fun(args)).toStrictEqual({
+            args: {
+                chatId: 1,
+                name: "",
+                whoSent: ""
+            },
+            command: CommandsNames.LEAVE
+        });
+    });
 
     it(`should return "Você saiu do grupo ${args.name}!"`, async () => {
         mockLeaveSuccess();
@@ -51,7 +77,12 @@ describe("Leave", () => {
         // Arrange
         const args: CommandArgs = {
             name: "test-group",
-            chatId: 123
+            chatId: 123,
+            commandSpecialArgs: {
+                customUsers: [],
+                defaultUsers: []
+            },
+            whoSent: ""
         };
 
         // Act

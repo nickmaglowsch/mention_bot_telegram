@@ -1,9 +1,18 @@
-import { CommandArgs } from "./commandArgs";
+import { CommandArgs, ICommand } from "./commandArgs";
 
-export interface Commands {
+export class Commands {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     name: CommandsNames;
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     args: CommandArgs;
-    exec: () => Promise<string>;
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    exec(): Promise<string>;
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    static registryCommand(): void
 }
 
 export enum CommandsNames {
@@ -42,3 +51,6 @@ export const commandsTextDescription = {
     REMOVE: "&lt;nome do grupo&gt; &lt;@ da pessoa&gt;  - remove alguém de um grupo",
     HELP: "mostra essa lista"
 };
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+export const commandHandles = new Map<CommandsNames, (args: unknown) => ICommand>();
