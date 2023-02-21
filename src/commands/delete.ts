@@ -1,9 +1,10 @@
-import { commandHandles, Commands, CommandsNames } from "../interfaces/commands";
+import { commandHandles, Commands, CommandsNames, registeredCommands } from "../interfaces/commands";
 import Group from "../models/group";
-import { CommandArgs, ICommand } from "../interfaces/commandArgs";
+import { CommandArgs, ICommand, RegistryCommandArgs } from "../interfaces/commandArgs";
 
 export class Delete extends Commands {
-    name = CommandsNames.DELETE;
+    static commandName: CommandsNames = "DELETE";
+
     args: CommandArgs;
 
     constructor(args: CommandArgs) {
@@ -24,12 +25,10 @@ export class Delete extends Commands {
         }
     }
 
-    static registryCommand(): void {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        commandHandles.set(CommandsNames.DELETE, (args: any) => {
+    static registryCommand(commandName: CommandsNames): void {
+        commandHandles.set(commandName, (args: RegistryCommandArgs) => {
             return {
-                command: CommandsNames.DELETE,
+                command: commandName,
                 args: {
                     name: args.name.toLowerCase(),
                     chatId: args.chatId,
@@ -37,5 +36,16 @@ export class Delete extends Commands {
                 }
             } as ICommand;
         });
+
+        registeredCommands.set(commandName, {
+            commandName: commandName,
+            commandDescription: "&lt;nome do grupo&gt;  - deleta um grupo",
+            adminOnly: true,
+            commandText: "mb delete group "
+        });
+    }
+
+    static build(args: CommandArgs): Commands {
+        return new Delete(args);
     }
 }

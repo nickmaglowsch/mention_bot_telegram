@@ -1,12 +1,28 @@
 import { Create } from "./create";
 import Group from "../models/group";
 import { CommandArgs, ICommand } from "../interfaces/commandArgs";
-import { commandHandles, CommandsNames } from "../interfaces/commands";
+import { commandHandles, registeredCommands } from "../interfaces/commands";
 
 describe("Create", () => {
 
+
+    it("should return object from build with set params", function () {
+        const args = {
+            name: "name",
+            whoSent: "whoSent",
+            chatId: 1,
+            commandSpecialArgs: {
+                defaultUsers: [],
+                customUsers: []
+            }
+        };
+        const built = Create.build(args);
+        expect(built).toBeTruthy();
+        expect(built.args).toStrictEqual(args);
+    });
+    
     it("should registry command handle", function () {
-        Create.registryCommand();
+        Create.registryCommand("CREATE");
 
         const args = {
             action: "",
@@ -15,7 +31,7 @@ describe("Create", () => {
             whoSent: ""
         };
 
-        const fun = commandHandles.get(CommandsNames.CREATE) as (args: unknown) => ICommand;
+        const fun = commandHandles.get("CREATE") as (args: unknown) => ICommand;
 
         expect(fun(args)).toStrictEqual({
             args: {
@@ -23,8 +39,9 @@ describe("Create", () => {
                 name: "",
                 whoSent: ""
             },
-            command: CommandsNames.CREATE
+            command: "CREATE"
         });
+        expect(registeredCommands.get("CREATE")).toBeTruthy();
     });
 
     it("should return \"created!\" when the group is successfully created", async () => {

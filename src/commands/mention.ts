@@ -1,10 +1,10 @@
-import { commandHandles, Commands, CommandsNames } from "../interfaces/commands";
+import { commandHandles, Commands, CommandsNames, registeredCommands } from "../interfaces/commands";
 import Group from "../models/group";
-import { CommandArgs, ICommand } from "../interfaces/commandArgs";
+import { CommandArgs, ICommand, RegistryCommandArgs } from "../interfaces/commandArgs";
 import { IUser } from "../models/user";
 
 export class Mention extends Commands {
-    name = CommandsNames.MENTION;
+    static commandName: CommandsNames = "MENTION";
     args: CommandArgs;
 
     constructor(args: CommandArgs) {
@@ -31,12 +31,10 @@ export class Mention extends Commands {
         }, "");
     }
 
-    static registryCommand(): void {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        commandHandles.set(CommandsNames.MENTION, (args: any) => {
+    static registryCommand(commandName: CommandsNames): void {
+        commandHandles.set(commandName, (args: RegistryCommandArgs) => {
             return {
-                command: CommandsNames.MENTION,
+                command: commandName,
                 args: {
                     name: args.action.split("@")[1].trim().toLowerCase(),
                     chatId: args.chatId,
@@ -44,5 +42,16 @@ export class Mention extends Commands {
                 }
             } as ICommand;
         });
+
+        registeredCommands.set(commandName, {
+            commandName: commandName,
+            commandDescription: "&lt;nome da grupo&gt; - marca todos do grupo mencionado",
+            adminOnly: false,
+            commandText: "@"
+        });
+    }
+
+    static build(args: CommandArgs): Commands {
+        return new Mention(args);
     }
 }

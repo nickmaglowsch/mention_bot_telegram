@@ -6,7 +6,7 @@ import {
     adminDescription,
     getDefaultUsersFromAction, getCustomUsersFromAction
 } from "./utils";
-import { CommandsNames } from "./interfaces/commands";
+import { registeredCommands } from "./interfaces/commands";
 
 describe("utils", () => {
     describe("isUserAllowedToUseCommand", () => {
@@ -31,6 +31,13 @@ describe("utils", () => {
             bot.getChatMember = jest.fn().mockResolvedValue({
                 status: "administrator"
             });
+            registeredCommands.clear();
+            registeredCommands.set("ADD", {
+                adminOnly: true,
+                commandText: "mb add ",
+                commandDescription: "",
+                commandName: "ADD"
+            });
             const chatId = 12345;
             const text = "mb add ";
             const result = await isUserAllowedToUseCommand(123, bot, chatId, text);
@@ -43,6 +50,13 @@ describe("utils", () => {
             bot.getChatMember = jest.fn().mockResolvedValue({
                 status: "member"
             });
+            registeredCommands.clear();
+            registeredCommands.set("ADD", {
+                adminOnly: true,
+                commandText: "mb add ",
+                commandDescription: "",
+                commandName: "ADD"
+            });
             const chatId = 12345;
             const text = "mb add ";
             const result = await isUserAllowedToUseCommand(123, bot, chatId, text);
@@ -53,6 +67,13 @@ describe("utils", () => {
 
     describe("isCommand", () => {
         it("should return true if the text includes a command from commandsText", () => {
+            registeredCommands.clear();
+            registeredCommands.set("ADD", {
+                adminOnly: false,
+                commandText: "mb add ",
+                commandDescription: "",
+                commandName: "ADD"
+            });
             const text = "mb add ";
             const result = isCommand(text);
             expect(result).toBe(true);
@@ -66,22 +87,53 @@ describe("utils", () => {
     });
 
     describe("isAdminCommand", () => {
+        beforeEach(() => {
+            registeredCommands.clear();
+            registeredCommands.set("DELETE", {
+                commandName: "DELETE",
+                commandText: "text",
+                adminOnly: true,
+                commandDescription: "desc"
+            });
+            registeredCommands.set("MENTION", {
+                commandName: "MENTION",
+                commandText: "text",
+                adminOnly: false,
+                commandDescription: "desc"
+            });
+        });
+
         it("should return true if a admin command is passed", function () {
-            expect(isAdminCommand(CommandsNames.DELETE)).toBeTruthy();
+            expect(isAdminCommand("DELETE")).toBeTruthy();
         });
 
         it("should return false if a not admin command is passed", function () {
-            expect(isAdminCommand(CommandsNames.MENTION)).toBeFalsy();
+            expect(isAdminCommand("MENTION")).toBeFalsy();
         });
     });
 
     describe("adminDescription", () => {
+        beforeEach(() => {
+            registeredCommands.clear();
+            registeredCommands.set("DELETE", {
+                commandName: "DELETE",
+                commandText: "text",
+                adminOnly: true,
+                commandDescription: "desc"
+            });
+            registeredCommands.set("MENTION", {
+                commandName: "MENTION",
+                commandText: "text",
+                adminOnly: false,
+                commandDescription: "desc"
+            });
+        });
         it("should return \" - comando para admin\" if a admin command is passed", function () {
-            expect(adminDescription(CommandsNames.DELETE)).toBe(" - comando para admin");
+            expect(adminDescription("DELETE")).toBe(" - comando para admin");
         });
 
         it("should return empty string if a not admin command is passed", function () {
-            expect(adminDescription(CommandsNames.MENTION)).toBe("");
+            expect(adminDescription("MENTION")).toBe("");
         });
     });
 

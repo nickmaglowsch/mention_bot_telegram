@@ -1,22 +1,38 @@
 import { Add } from "./add";
 import Group from "../models/group";
-import { CommandArgs, ICommand } from "../interfaces/commandArgs";
-import { commandHandles, CommandsNames } from "../interfaces/commands";
+import { CommandArgs, ICommand, RegistryCommandArgs } from "../interfaces/commandArgs";
+import { commandHandles, registeredCommands } from "../interfaces/commands";
 
 describe("Add", () => {
 
+    it("should return object from build with set params", function () {
+        const args = {
+            name: "name",
+            whoSent: "whoSent",
+            chatId: 1,
+            commandSpecialArgs: {
+                defaultUsers: [],
+                customUsers: []
+            }
+        };
+        const built = Add.build(args);
+        expect(built).toBeTruthy();
+        expect(built.args).toStrictEqual(args);
+    });
+
     describe("command handle", () => {
         it("should registry command handle", function () {
-            Add.registryCommand();
+            Add.registryCommand("ADD");
 
             const args = {
                 action: "",
                 name: "",
                 chatId: 1,
-                whoSent: ""
+                whoSent: "",
+                entities: []
             };
 
-            const fun = commandHandles.get(CommandsNames.ADD) as (args: unknown) => ICommand;
+            const fun = commandHandles.get("ADD") as ((args: RegistryCommandArgs) => ICommand) | (() => ICommand);
 
             expect(fun(args)).toStrictEqual({
                 args: {
@@ -28,8 +44,9 @@ describe("Add", () => {
                     name: "",
                     whoSent: ""
                 },
-                command: CommandsNames.ADD
+                command: "ADD"
             });
+            expect(registeredCommands.get("ADD")).toBeTruthy();
         });
     });
 

@@ -1,9 +1,10 @@
-import { commandHandles, Commands, CommandsNames } from "../interfaces/commands";
+import { commandHandles, Commands, CommandsNames, registeredCommands } from "../interfaces/commands";
 import Group from "../models/group";
-import { CommandArgs, ICommand } from "../interfaces/commandArgs";
+import { CommandArgs, ICommand, RegistryCommandArgs } from "../interfaces/commandArgs";
 
 export class Leave extends Commands {
-    name = CommandsNames.LEAVE;
+    static commandName: CommandsNames = "LEAVE";
+
     args: CommandArgs;
 
     constructor(args: CommandArgs) {
@@ -51,12 +52,10 @@ export class Leave extends Commands {
         }
     }
 
-    static registryCommand(): void {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        commandHandles.set(CommandsNames.LEAVE, (args: any) => {
+    static registryCommand(commandName: CommandsNames): void {
+        commandHandles.set(commandName, (args: RegistryCommandArgs) => {
             return {
-                command: CommandsNames.LEAVE,
+                command: commandName,
                 args: {
                     name: args.name.toLowerCase(),
                     chatId: args.chatId,
@@ -64,5 +63,16 @@ export class Leave extends Commands {
                 }
             } as ICommand;
         });
+
+        registeredCommands.set(commandName, {
+            commandName: commandName,
+            commandDescription: "&lt;nome do grupo&gt; - serve para você sair de um grupo",
+            adminOnly: false,
+            commandText: "mb leave "
+        });
+    }
+
+    static build(args: CommandArgs): Commands {
+        return new Leave(args);
     }
 }

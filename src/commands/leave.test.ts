@@ -6,7 +6,7 @@ import {
     mockLeaveFail,
     mockDbError
 } from "../mocks/leave.mock";
-import { commandHandles, CommandsNames } from "../interfaces/commands";
+import { commandHandles } from "../interfaces/commands";
 
 jest.setTimeout(1000000);
 
@@ -21,8 +21,23 @@ describe("Leave", () => {
         }
     };
 
+    it("should return object from build with set params", function () {
+        const args = {
+            name: "name",
+            whoSent: "whoSent",
+            chatId: 1,
+            commandSpecialArgs: {
+                defaultUsers: [],
+                customUsers: []
+            }
+        };
+        const built = Leave.build(args);
+        expect(built).toBeTruthy();
+        expect(built.args).toStrictEqual(args);
+    });
+
     it("should registry command handle", function () {
-        Leave.registryCommand();
+        Leave.registryCommand("LEAVE");
 
         const args = {
             action: "",
@@ -31,7 +46,7 @@ describe("Leave", () => {
             whoSent: ""
         };
 
-        const fun = commandHandles.get(CommandsNames.LEAVE) as (args: unknown) => ICommand;
+        const fun = commandHandles.get("LEAVE") as (args: unknown) => ICommand;
 
         expect(fun(args)).toStrictEqual({
             args: {
@@ -39,7 +54,7 @@ describe("Leave", () => {
                 name: "",
                 whoSent: ""
             },
-            command: CommandsNames.LEAVE
+            command: "LEAVE"
         });
     });
 

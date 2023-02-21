@@ -1,9 +1,10 @@
-import { commandHandles, Commands, CommandsNames } from "../interfaces/commands";
+import { commandHandles, Commands, CommandsNames, registeredCommands } from "../interfaces/commands";
 import Group from "../models/group";
 import { CommandArgs, ICommand } from "../interfaces/commandArgs";
 
 export class Create extends Commands {
-    name = CommandsNames.CREATE;
+    static commandName: CommandsNames = "CREATE";
+
     args: CommandArgs;
 
     constructor(args: CommandArgs) {
@@ -25,12 +26,10 @@ export class Create extends Commands {
         }
     }
 
-    static registryCommand(): void {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        commandHandles.set(CommandsNames.CREATE, (args: any) => {
+    static registryCommand(commandName: CommandsNames): void {
+        commandHandles.set(commandName, (args) => {
             return {
-                command: CommandsNames.CREATE,
+                command: commandName,
                 args: {
                     name: args.name.toLowerCase(),
                     chatId: args.chatId,
@@ -38,5 +37,16 @@ export class Create extends Commands {
                 }
             } as ICommand;
         });
+
+        registeredCommands.set(commandName, {
+            commandName: commandName,
+            commandDescription: "&lt;nome do grupo&gt; - cria um novo grupo",
+            adminOnly: true,
+            commandText: "mb create group "
+        });
+    }
+
+    static build(args: CommandArgs): Commands {
+        return new Create(args);
     }
 }

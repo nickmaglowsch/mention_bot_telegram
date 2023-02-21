@@ -7,7 +7,7 @@ import dotenv from "dotenv";
 import commands from "./commands";
 
 // register commands
-commands.forEach(command => command.registryCommand());
+commands.forEach(command => command.registryCommand(command.commandName));
 
 dotenv.config();
 const logger = pino();

@@ -1,16 +1,15 @@
 import TelegramBot from "node-telegram-bot-api";
-import { commandHandles, Commands, CommandsNames, commandsText } from "./interfaces/commands";
-import { Create } from "./commands/create";
-import { Add } from "./commands/add";
-import { Mention } from "./commands/mention";
-import { Delete } from "./commands/delete";
-import { Leave } from "./commands/leave";
-import { Remove } from "./commands/remove";
-import { CommandArgs } from "./interfaces/commandArgs";
-import { Help } from "./commands/help";
+import {
+    commandHandles,
+    CommandRegistry,
+    Commands,
+    CommandsNames,
+    registeredCommands
+} from "./interfaces/commands";
+import { CommandArgs, RegistryCommandArgs } from "./interfaces/commandArgs";
+import commands from "./commands";
 
 export class TelegramFactory {
-    private command: CommandsNames | undefined;
     private args: CommandArgs = {
         name: "name",
         chatId: -1,
@@ -21,6 +20,7 @@ export class TelegramFactory {
     private readonly entities: TelegramBot.MessageEntity[] | undefined;
     private readonly chatId: number;
     private readonly whoSent: string | number;
+    private command: CommandsNames | undefined;
 
     constructor(
         action: string,
@@ -36,37 +36,27 @@ export class TelegramFactory {
     }
 
     build(): Commands {
-        switch (this.command) {
-            case CommandsNames.CREATE:
-                return new Create(this.args);
-            case CommandsNames.ADD:
-                return new Add(this.args);
-            case CommandsNames.MENTION:
-                return new Mention(this.args);
-            case CommandsNames.DELETE:
-                return new Delete(this.args);
-            case CommandsNames.LEAVE:
-                return new Leave(this.args);
-            case CommandsNames.REMOVE:
-                return new Remove(this.args);
-            case CommandsNames.HELP:
-                return new Help();
-            default:
-                throw new Error("INVALID COMMAND");
+        const _command = commands.find(command => command.commandName === this.command);
+
+        if (!_command) {
+            throw new Error("INVALID COMMAND");
         }
+
+        return _command.build(this.args);
     }
 
 
     private handleAction() {
         for (const [ key, value ] of commandHandles) {
-            const commandText = commandsText[key];
+            const { commandText } = registeredCommands.get(key) as CommandRegistry;
 
             if (this.action.startsWith(commandText)) {
-                const args = {
+                const args: RegistryCommandArgs = {
                     action: this.action,
                     name: this.action.split(commandText)[1]?.split(" ")[0]?.trim(),
                     chatId: this.chatId,
-                    whoSent: this.whoSent
+                    whoSent: this.whoSent,
+                    entities: this.entities ? this.entities : []
                 };
 
                 const result = value(args);

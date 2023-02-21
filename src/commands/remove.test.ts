@@ -1,6 +1,6 @@
 import { Remove } from "./remove";
 import Group from "../models/group";
-import { commandHandles, CommandsNames } from "../interfaces/commands";
+import { commandHandles } from "../interfaces/commands";
 import { ICommand } from "../interfaces/commandArgs";
 
 
@@ -12,8 +12,23 @@ describe("Remove command", () => {
         jest.clearAllMocks();
     });
 
+    it("should return object from build with set params", function () {
+        const args = {
+            name: "name",
+            whoSent: "whoSent",
+            chatId: 1,
+            commandSpecialArgs: {
+                defaultUsers: [],
+                customUsers: []
+            }
+        };
+        const built = Remove.build(args);
+        expect(built).toBeTruthy();
+        expect(built.args).toStrictEqual(args);
+    });
+
     it("should registry command handle", function () {
-        Remove.registryCommand();
+        Remove.registryCommand("REMOVE");
 
         const args = {
             action: "",
@@ -22,7 +37,7 @@ describe("Remove command", () => {
             whoSent: ""
         };
 
-        const fun = commandHandles.get(CommandsNames.REMOVE) as (args: unknown) => ICommand;
+        const fun = commandHandles.get("REMOVE") as (args: unknown) => ICommand;
 
         expect(fun(args)).toStrictEqual({
             args: {
@@ -34,7 +49,7 @@ describe("Remove command", () => {
                 name: "",
                 whoSent: ""
             },
-            command: CommandsNames.REMOVE
+            command: "REMOVE"
         });
     });
 

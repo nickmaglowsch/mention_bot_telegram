@@ -1,12 +1,27 @@
 import { Mention } from "./mention";
 import Group from "../models/group";
 import { CommandArgs, ICommand } from "../interfaces/commandArgs";
-import { commandHandles, CommandsNames } from "../interfaces/commands";
+import { commandHandles } from "../interfaces/commands";
 
 describe("Mention", () => {
 
+    it("should return object from build with set params", function () {
+        const args = {
+            name: "name",
+            whoSent: "whoSent",
+            chatId: 1,
+            commandSpecialArgs: {
+                defaultUsers: [],
+                customUsers: []
+            }
+        };
+        const built = Mention.build(args);
+        expect(built).toBeTruthy();
+        expect(built.args).toStrictEqual(args);
+    });
+
     it("should registry command handle", function () {
-        Mention.registryCommand();
+        Mention.registryCommand("MENTION");
 
         const args = {
             action: "@test",
@@ -15,7 +30,7 @@ describe("Mention", () => {
             whoSent: ""
         };
 
-        const fun = commandHandles.get(CommandsNames.MENTION) as (args: unknown) => ICommand;
+        const fun = commandHandles.get("MENTION") as (args: unknown) => ICommand;
 
         expect(fun(args)).toStrictEqual({
             args: {
@@ -23,7 +38,7 @@ describe("Mention", () => {
                 name: "test",
                 whoSent: ""
             },
-            command: CommandsNames.MENTION
+            command: "MENTION"
         });
     });
 

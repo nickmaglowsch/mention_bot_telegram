@@ -1,6 +1,8 @@
 import { Help } from "./help";
-import { commandHandles, CommandsNames, commandsText, commandsTextDescription } from "../interfaces/commands";
-import { adminDescription } from "../utils";
+import {
+    commandHandles,
+    registeredCommands
+} from "../interfaces/commands";
 import { ICommand } from "../interfaces/commandArgs";
 
 describe("Help", () => {
@@ -10,8 +12,13 @@ describe("Help", () => {
         help = new Help();
     });
 
+    it("should return object from build with set params", function () {
+        const built = Help.build();
+        expect(built).toBeTruthy();
+    });
+
     it("should registry command handle", function () {
-        Help.registryCommand();
+        Help.registryCommand("HELP");
 
         const args = {
             action: "",
@@ -20,23 +27,28 @@ describe("Help", () => {
             whoSent: ""
         };
 
-        const fun = commandHandles.get(CommandsNames.HELP) as (args: unknown) => ICommand;
+        const fun = commandHandles.get("HELP") as (args: unknown) => ICommand;
 
         expect(fun(args)).toStrictEqual({
             args: {},
-            command: CommandsNames.HELP
+            command: "HELP"
         });
+        expect(registeredCommands.get("HELP")).toBeTruthy();
     });
 
     it("should generate a help text with command names, descriptions, and admin description", async () => {
-        const expectedHelpText = (Object.keys(commandsText) as CommandsNames[])
-            .reduce((acc, cmd) => {
-                acc += `<code>${commandsText[cmd]}</code> ${commandsTextDescription[cmd]}${adminDescription(cmd)}\n\n`;
-                return acc;
-            }, "") + "Para todos os comandos, basta remover os &lt;&gt; e colocar as informações pedidas em seu lugar!";
+        registeredCommands.clear();
+        registeredCommands.set("HELP", {
+            commandName: "HELP",
+            commandText: "TEXT",
+            adminOnly: false,
+            commandDescription: "description"
+        });
 
         const helpText = await help.exec();
 
-        expect(helpText).toEqual(expectedHelpText);
+        expect(helpText).toEqual("<code>TEXT</code> description\n" +
+            "\n" +
+            "Para todos os comandos, basta remover os &lt;&gt; e colocar as informações pedidas em seu lugar!");
     });
 });

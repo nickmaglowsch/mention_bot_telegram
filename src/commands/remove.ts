@@ -1,5 +1,5 @@
-import { CommandArgs, ICommand } from "../interfaces/commandArgs";
-import { commandHandles, Commands, CommandsNames } from "../interfaces/commands";
+import { CommandArgs, ICommand, RegistryCommandArgs } from "../interfaces/commandArgs";
+import { commandHandles, Commands, CommandsNames, registeredCommands } from "../interfaces/commands";
 import Group from "../models/group";
 import _ from "lodash";
 import pino from "pino";
@@ -8,7 +8,7 @@ import { getCustomUsersFromAction, getDefaultUsersFromAction } from "../utils";
 const logger = pino();
 
 export class Remove extends Commands {
-    name = CommandsNames.REMOVE;
+    static commandName: CommandsNames = "REMOVE";
     args: CommandArgs;
 
     constructor(args: CommandArgs) {
@@ -48,15 +48,13 @@ export class Remove extends Commands {
         }
     }
 
-    static registryCommand(): void {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        commandHandles.set(CommandsNames.REMOVE, (args: any) => {
+    static registryCommand(commandName: CommandsNames): void {
+        commandHandles.set(commandName, (args: RegistryCommandArgs) => {
             const customUsers = getCustomUsersFromAction(args.action);
             const defaultUsers = getDefaultUsersFromAction(args.entities);
 
             return {
-                command: CommandsNames.REMOVE,
+                command: commandName,
                 args: {
                     name: args.name.toLowerCase(),
                     commandSpecialArgs: {
@@ -68,6 +66,17 @@ export class Remove extends Commands {
                 }
             } as ICommand;
         });
+
+        registeredCommands.set(commandName, {
+            commandName: commandName,
+            commandDescription: "&lt;nome do grupo&gt; &lt;@ da pessoa&gt;  - remove alguém de um grupo",
+            adminOnly: true,
+            commandText: "mb remove "
+        });
+    }
+
+    static build(args: CommandArgs): Commands {
+        return new Remove(args);
     }
 
 }
