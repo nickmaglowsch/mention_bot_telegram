@@ -1,4 +1,4 @@
-# mentions-bot
+# mentions-bot ![deploy](https://github.com/nickmaglowsch/mention_bot_telegram/actions/workflows/deploy.yml/badge.svg?event=push) ![tests](https://github.com/nickmaglowsch/mention_bot_telegram/actions/workflows/test.yml/badge.svg)
 
 Telegram bot that creates aliases for bulk mentioning people inside a group.
 
