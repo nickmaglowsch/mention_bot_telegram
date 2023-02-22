@@ -53,7 +53,7 @@ export class TelegramFactory {
             if (this.action[actionStringTest](commandText)) {
                 const args: RegistryCommandArgs = {
                     action: this.action,
-                    name: this.action.split(commandText)[1]?.split(" ")[0]?.trim(),
+                    name: this.action.split(commandText)[1]?.split(" ")[0]?.trim().toLowerCase(),
                     chatId: this.chatId,
                     whoSent: this.whoSent,
                     entities: this.entities ? this.entities : []

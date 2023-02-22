@@ -21,7 +21,7 @@ export interface CommandRegistry {
     commandText: string;
     adminOnly: boolean;
     commandDescription: string;
-    actionStringTest: "startsWith" | "includes"
+    actionStringTest: "startsWith" | "includes";
 }
 
 export type CommandsNames = "CREATE" | "ADD" | "MENTION" | "DELETE" | "LEAVE"

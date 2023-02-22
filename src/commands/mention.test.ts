@@ -25,7 +25,7 @@ describe("Mention", () => {
 
         const args = {
             action: "@test",
-            name: "",
+            name: "test",
             chatId: 1,
             whoSent: ""
         };

@@ -36,7 +36,7 @@ export class Mention extends Commands {
             return {
                 command: commandName,
                 args: {
-                    name: args.action.split("@")[1].trim().toLowerCase(),
+                    name: args.name,
                     chatId: args.chatId,
                     whoSent: args.whoSent
                 }
