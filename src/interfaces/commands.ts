@@ -25,7 +25,7 @@ export interface CommandRegistry {
 }
 
 export type CommandsNames = "CREATE" | "ADD" | "MENTION" | "DELETE" | "LEAVE"
-    | "REMOVE" | "HELP" | "EMPTY_COMMAND"
+    | "REMOVE" | "HELP" | "EMPTY_COMMAND" | "LIST"
 
 
 export const registeredCommands = new Map<CommandsNames, CommandRegistry>();

@@ -5,6 +5,8 @@ import { Help } from "./help";
 import { Leave } from "./leave";
 import { Mention } from "./mention";
 import { Remove } from "./remove";
+import { List } from "./list";
+
 
 export default [
     Add,
@@ -14,4 +16,5 @@ export default [
     Leave,
     Mention,
     Remove,
+    List
 ];
