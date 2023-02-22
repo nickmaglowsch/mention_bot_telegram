@@ -31,7 +31,8 @@ export class Help extends Commands {
             commandName: commandName,
             commandDescription: "mostra essa lista",
             adminOnly: false,
-            commandText: "mb help"
+            commandText: "mb help",
+            actionStringTest: "startsWith"
         });
     }
 

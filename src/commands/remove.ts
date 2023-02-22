@@ -71,7 +71,8 @@ export class Remove extends Commands {
             commandName: commandName,
             commandDescription: "&lt;nome do grupo&gt; &lt;@ da pessoa&gt;  - remove alguém de um grupo",
             adminOnly: true,
-            commandText: "mb remove "
+            commandText: "mb remove ",
+            actionStringTest: "startsWith"
         });
     }
 

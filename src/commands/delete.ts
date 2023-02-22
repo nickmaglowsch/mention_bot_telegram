@@ -41,7 +41,8 @@ export class Delete extends Commands {
             commandName: commandName,
             commandDescription: "&lt;nome do grupo&gt;  - deleta um grupo",
             adminOnly: true,
-            commandText: "mb delete group "
+            commandText: "mb delete group ",
+            actionStringTest: "startsWith"
         });
     }
 

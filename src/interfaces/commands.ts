@@ -21,6 +21,7 @@ export interface CommandRegistry {
     commandText: string;
     adminOnly: boolean;
     commandDescription: string;
+    actionStringTest: "startsWith" | "includes"
 }
 
 export type CommandsNames = "CREATE" | "ADD" | "MENTION" | "DELETE" | "LEAVE"
@@ -28,6 +29,5 @@ export type CommandsNames = "CREATE" | "ADD" | "MENTION" | "DELETE" | "LEAVE"
 
 
 export const registeredCommands = new Map<CommandsNames, CommandRegistry>();
-
 
 export const commandHandles = new Map<CommandsNames, ((args: RegistryCommandArgs) => ICommand) | (() => ICommand)>();

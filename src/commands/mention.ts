@@ -47,7 +47,8 @@ export class Mention extends Commands {
             commandName: commandName,
             commandDescription: "&lt;nome da grupo&gt; - marca todos do grupo mencionado",
             adminOnly: false,
-            commandText: "@"
+            commandText: "@",
+            actionStringTest: "includes"
         });
     }
 

@@ -42,7 +42,8 @@ export class Create extends Commands {
             commandName: commandName,
             commandDescription: "&lt;nome do grupo&gt; - cria um novo grupo",
             adminOnly: true,
-            commandText: "mb create group "
+            commandText: "mb create group ",
+            actionStringTest: "startsWith"
         });
     }
 

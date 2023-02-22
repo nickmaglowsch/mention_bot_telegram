@@ -48,9 +48,9 @@ export class TelegramFactory {
 
     private handleAction() {
         for (const [ key, value ] of commandHandles) {
-            const { commandText } = registeredCommands.get(key) as CommandRegistry;
+            const { commandText, actionStringTest } = registeredCommands.get(key) as CommandRegistry;
 
-            if (this.action.startsWith(commandText)) {
+            if (this.action[actionStringTest](commandText)) {
                 const args: RegistryCommandArgs = {
                     action: this.action,
                     name: this.action.split(commandText)[1]?.split(" ")[0]?.trim(),

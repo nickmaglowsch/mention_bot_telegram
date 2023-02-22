@@ -68,7 +68,8 @@ export class Leave extends Commands {
             commandName: commandName,
             commandDescription: "&lt;nome do grupo&gt; - serve para você sair de um grupo",
             adminOnly: false,
-            commandText: "mb leave "
+            commandText: "mb leave ",
+            actionStringTest: "startsWith"
         });
     }
 

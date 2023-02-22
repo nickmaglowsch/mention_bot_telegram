@@ -18,7 +18,8 @@ describe("TelegramFactory", () => {
             commandName: "CREATE",
             commandDescription: "",
             adminOnly: true,
-            commandText: "mb create group "
+            commandText: "mb create group ",
+            actionStringTest: "startsWith"
         });
         const factory = baseFactory("mb create group MyGroup");
         const command = factory.build();

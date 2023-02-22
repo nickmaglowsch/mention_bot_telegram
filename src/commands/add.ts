@@ -74,7 +74,8 @@ export class Add extends Commands {
             commandName: commandName,
             commandDescription: "&lt;nome do grupo&gt; &lt;@ das pessoas&gt; - adiciona pessoas num grupo",
             adminOnly: true,
-            commandText: "mb add "
+            commandText: "mb add ",
+            actionStringTest: "startsWith"
         });
 
     }
