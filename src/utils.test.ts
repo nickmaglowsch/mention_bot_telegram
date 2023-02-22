@@ -36,7 +36,8 @@ describe("utils", () => {
                 adminOnly: true,
                 commandText: "mb add ",
                 commandDescription: "",
-                commandName: "ADD"
+                commandName: "ADD",
+                actionStringTest: "startsWith"
             });
             const chatId = 12345;
             const text = "mb add ";
@@ -55,7 +56,8 @@ describe("utils", () => {
                 adminOnly: true,
                 commandText: "mb add ",
                 commandDescription: "",
-                commandName: "ADD"
+                commandName: "ADD",
+                actionStringTest: "startsWith"
             });
             const chatId = 12345;
             const text = "mb add ";
@@ -72,7 +74,8 @@ describe("utils", () => {
                 adminOnly: false,
                 commandText: "mb add ",
                 commandDescription: "",
-                commandName: "ADD"
+                commandName: "ADD",
+                actionStringTest: "startsWith"
             });
             const text = "mb add ";
             const result = isCommand(text);
@@ -93,13 +96,15 @@ describe("utils", () => {
                 commandName: "DELETE",
                 commandText: "text",
                 adminOnly: true,
-                commandDescription: "desc"
+                commandDescription: "desc",
+                actionStringTest: "startsWith"
             });
             registeredCommands.set("MENTION", {
                 commandName: "MENTION",
                 commandText: "text",
                 adminOnly: false,
-                commandDescription: "desc"
+                commandDescription: "desc",
+                actionStringTest: "includes"
             });
         });
 
@@ -119,13 +124,15 @@ describe("utils", () => {
                 commandName: "DELETE",
                 commandText: "text",
                 adminOnly: true,
-                commandDescription: "desc"
+                commandDescription: "desc",
+                actionStringTest: "startsWith"
             });
             registeredCommands.set("MENTION", {
                 commandName: "MENTION",
                 commandText: "text",
                 adminOnly: false,
-                commandDescription: "desc"
+                commandDescription: "desc",
+                actionStringTest: "includes"
             });
         });
         it("should return \" - comando para admin\" if a admin command is passed", function () {

@@ -42,7 +42,8 @@ describe("Help", () => {
             commandName: "HELP",
             commandText: "TEXT",
             adminOnly: false,
-            commandDescription: "description"
+            commandDescription: "description",
+            actionStringTest: "startsWith"
         });
 
         const helpText = await help.exec();
