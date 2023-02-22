@@ -1,13 +1,57 @@
 import { Mention } from "./mention";
 import Group from "../models/group";
-import { CommandArgs } from "../interfaces/commandArgs";
+import { CommandArgs, ICommand } from "../interfaces/commandArgs";
+import { commandHandles } from "../interfaces/commands";
 
 describe("Mention", () => {
+
+    it("should return object from build with set params", function () {
+        const args = {
+            name: "name",
+            whoSent: "whoSent",
+            chatId: 1,
+            commandSpecialArgs: {
+                defaultUsers: [],
+                customUsers: []
+            }
+        };
+        const built = Mention.build(args);
+        expect(built).toBeTruthy();
+        expect(built.args).toStrictEqual(args);
+    });
+
+    it("should registry command handle", function () {
+        Mention.registryCommand("MENTION");
+
+        const args = {
+            action: "@test",
+            name: "test",
+            chatId: 1,
+            whoSent: ""
+        };
+
+        const fun = commandHandles.get("MENTION") as (args: unknown) => ICommand;
+
+        expect(fun(args)).toStrictEqual({
+            args: {
+                chatId: 1,
+                name: "test",
+                whoSent: ""
+            },
+            command: "MENTION"
+        });
+    });
+
     it("should return a string with user mentions", async () => {
         // Arrange
         const args: CommandArgs = {
             name: "test-group",
-            chatId: 123
+            chatId: 123,
+            commandSpecialArgs: {
+                customUsers: [],
+                defaultUsers: []
+            },
+            whoSent: "sender"
         };
         const mockGroupFindOne = jest
             .spyOn(Group, "findOne")
@@ -27,7 +71,7 @@ describe("Mention", () => {
 
         // Assert
         expect(result).toBe(
-            '<a href="tg://user?id=1">John</a> <a href="tg://user?id=2">Mary</a> Jane '
+            "<a href=\"tg://user?id=1\">John</a> <a href=\"tg://user?id=2\">Mary</a> Jane "
         );
         expect(mockGroupFindOne).toHaveBeenCalledWith({
             groupId: 123,
@@ -39,7 +83,12 @@ describe("Mention", () => {
         // Arrange
         const args: CommandArgs = {
             name: "test-group",
-            chatId: 123
+            chatId: 123,
+            commandSpecialArgs: {
+                customUsers: [],
+                defaultUsers: []
+            },
+            whoSent: "sender"
         };
         const mockGroupFindOne = jest
             .spyOn(Group, "findOne")
@@ -61,7 +110,12 @@ describe("Mention", () => {
         // Arrange
         const args: CommandArgs = {
             name: "test-group",
-            chatId: 123
+            chatId: 123,
+            commandSpecialArgs: {
+                customUsers: [],
+                defaultUsers: []
+            },
+            whoSent: "sender"
         };
         const mockGroupFindOne = jest
             .spyOn(Group, "findOne")

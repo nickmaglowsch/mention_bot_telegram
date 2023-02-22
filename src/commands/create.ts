@@ -1,12 +1,14 @@
-import { Commands, CommandsNames } from "../interfaces/commands";
+import { commandHandles, Commands, CommandsNames, registeredCommands } from "../interfaces/commands";
 import Group from "../models/group";
-import { CommandArgs } from "../interfaces/commandArgs";
+import { CommandArgs, ICommand } from "../interfaces/commandArgs";
 
-export class Create implements Commands {
-    name = CommandsNames.CREATE;
+export class Create extends Commands {
+    static commandName: CommandsNames = "CREATE";
+
     args: CommandArgs;
 
     constructor(args: CommandArgs) {
+        super();
         this.args = args;
     }
 
@@ -16,11 +18,36 @@ export class Create implements Commands {
             await Group.create({
                 groupId: chatId,
                 name: name,
-                users: [],
+                users: []
             });
             return "created!";
         } catch (error) {
             return `${error}`;
         }
+    }
+
+    static registryCommand(commandName: CommandsNames): void {
+        commandHandles.set(commandName, (args) => {
+            return {
+                command: commandName,
+                args: {
+                    name: args.name.toLowerCase(),
+                    chatId: args.chatId,
+                    whoSent: args.whoSent
+                }
+            } as ICommand;
+        });
+
+        registeredCommands.set(commandName, {
+            commandName: commandName,
+            commandDescription: "&lt;nome do grupo&gt; - cria um novo grupo",
+            adminOnly: true,
+            commandText: "mb create group ",
+            actionStringTest: "startsWith"
+        });
+    }
+
+    static build(args: CommandArgs): Commands {
+        return new Create(args);
     }
 }

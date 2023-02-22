@@ -1,12 +1,14 @@
-import { Commands, CommandsNames } from "../interfaces/commands";
+import { commandHandles, Commands, CommandsNames, registeredCommands } from "../interfaces/commands";
 import Group from "../models/group";
-import { CommandArgs } from "../interfaces/commandArgs";
+import { CommandArgs, ICommand, RegistryCommandArgs } from "../interfaces/commandArgs";
 
-export class Delete implements Commands {
-    name = CommandsNames.DELETE;
+export class Delete extends Commands {
+    static commandName: CommandsNames = "DELETE";
+
     args: CommandArgs;
 
     constructor(args: CommandArgs) {
+        super();
         this.args = args;
     }
 
@@ -15,11 +17,36 @@ export class Delete implements Commands {
         try {
             await Group.deleteOne({
                 groupId: chatId,
-                name: name,
+                name: name
             });
             return `Grupo ${name} deletado!`;
         } catch (error) {
             return `${error}`;
         }
+    }
+
+    static registryCommand(commandName: CommandsNames): void {
+        commandHandles.set(commandName, (args: RegistryCommandArgs) => {
+            return {
+                command: commandName,
+                args: {
+                    name: args.name.toLowerCase(),
+                    chatId: args.chatId,
+                    whoSent: args.whoSent
+                }
+            } as ICommand;
+        });
+
+        registeredCommands.set(commandName, {
+            commandName: commandName,
+            commandDescription: "&lt;nome do grupo&gt;  - deleta um grupo",
+            adminOnly: true,
+            commandText: "mb delete group ",
+            actionStringTest: "startsWith"
+        });
+    }
+
+    static build(args: CommandArgs): Commands {
+        return new Delete(args);
     }
 }

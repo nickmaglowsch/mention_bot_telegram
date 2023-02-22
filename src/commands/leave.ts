@@ -1,13 +1,14 @@
-import { Commands, CommandsNames } from "../interfaces/commands";
+import { commandHandles, Commands, CommandsNames, registeredCommands } from "../interfaces/commands";
 import Group from "../models/group";
-import { CommandArgs } from "../interfaces/commandArgs";
-import { assertLabeledStatement } from "@babel/types";
+import { CommandArgs, ICommand, RegistryCommandArgs } from "../interfaces/commandArgs";
 
-export class Leave implements Commands {
-    name = CommandsNames.LEAVE;
+export class Leave extends Commands {
+    static commandName: CommandsNames = "LEAVE";
+
     args: CommandArgs;
 
     constructor(args: CommandArgs) {
+        super();
         this.args = args;
     }
 
@@ -49,5 +50,30 @@ export class Leave implements Commands {
         } catch (error) {
             return `${error}`;
         }
+    }
+
+    static registryCommand(commandName: CommandsNames): void {
+        commandHandles.set(commandName, (args: RegistryCommandArgs) => {
+            return {
+                command: commandName,
+                args: {
+                    name: args.name.toLowerCase(),
+                    chatId: args.chatId,
+                    whoSent: args.whoSent
+                }
+            } as ICommand;
+        });
+
+        registeredCommands.set(commandName, {
+            commandName: commandName,
+            commandDescription: "&lt;nome do grupo&gt; - serve para você sair de um grupo",
+            adminOnly: false,
+            commandText: "mb leave ",
+            actionStringTest: "startsWith"
+        });
+    }
+
+    static build(args: CommandArgs): Commands {
+        return new Leave(args);
     }
 }

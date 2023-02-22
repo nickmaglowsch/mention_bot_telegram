@@ -1,6 +1,12 @@
 import TelegramBot from "node-telegram-bot-api";
-import { isUserAllowedToUseCommand, isCommand, isAdminCommand, adminDescription } from "./utils";
-import { CommandsNames } from "./interfaces/commands";
+import {
+    isUserAllowedToUseCommand,
+    isCommand,
+    isAdminCommand,
+    adminDescription,
+    getDefaultUsersFromAction, getCustomUsersFromAction
+} from "./utils";
+import { registeredCommands } from "./interfaces/commands";
 
 describe("utils", () => {
     describe("isUserAllowedToUseCommand", () => {
@@ -25,6 +31,14 @@ describe("utils", () => {
             bot.getChatMember = jest.fn().mockResolvedValue({
                 status: "administrator"
             });
+            registeredCommands.clear();
+            registeredCommands.set("ADD", {
+                adminOnly: true,
+                commandText: "mb add ",
+                commandDescription: "",
+                commandName: "ADD",
+                actionStringTest: "startsWith"
+            });
             const chatId = 12345;
             const text = "mb add ";
             const result = await isUserAllowedToUseCommand(123, bot, chatId, text);
@@ -37,6 +51,14 @@ describe("utils", () => {
             bot.getChatMember = jest.fn().mockResolvedValue({
                 status: "member"
             });
+            registeredCommands.clear();
+            registeredCommands.set("ADD", {
+                adminOnly: true,
+                commandText: "mb add ",
+                commandDescription: "",
+                commandName: "ADD",
+                actionStringTest: "startsWith"
+            });
             const chatId = 12345;
             const text = "mb add ";
             const result = await isUserAllowedToUseCommand(123, bot, chatId, text);
@@ -47,6 +69,14 @@ describe("utils", () => {
 
     describe("isCommand", () => {
         it("should return true if the text includes a command from commandsText", () => {
+            registeredCommands.clear();
+            registeredCommands.set("ADD", {
+                adminOnly: false,
+                commandText: "mb add ",
+                commandDescription: "",
+                commandName: "ADD",
+                actionStringTest: "startsWith"
+            });
             const text = "mb add ";
             const result = isCommand(text);
             expect(result).toBe(true);
@@ -60,22 +90,98 @@ describe("utils", () => {
     });
 
     describe("isAdminCommand", () => {
+        beforeEach(() => {
+            registeredCommands.clear();
+            registeredCommands.set("DELETE", {
+                commandName: "DELETE",
+                commandText: "text",
+                adminOnly: true,
+                commandDescription: "desc",
+                actionStringTest: "startsWith"
+            });
+            registeredCommands.set("MENTION", {
+                commandName: "MENTION",
+                commandText: "text",
+                adminOnly: false,
+                commandDescription: "desc",
+                actionStringTest: "includes"
+            });
+        });
+
         it("should return true if a admin command is passed", function () {
-            expect(isAdminCommand(CommandsNames.DELETE)).toBeTruthy();
+            expect(isAdminCommand("DELETE")).toBeTruthy();
         });
 
         it("should return false if a not admin command is passed", function () {
-            expect(isAdminCommand(CommandsNames.MENTION)).toBeFalsy();
+            expect(isAdminCommand("MENTION")).toBeFalsy();
         });
     });
 
     describe("adminDescription", () => {
+        beforeEach(() => {
+            registeredCommands.clear();
+            registeredCommands.set("DELETE", {
+                commandName: "DELETE",
+                commandText: "text",
+                adminOnly: true,
+                commandDescription: "desc",
+                actionStringTest: "startsWith"
+            });
+            registeredCommands.set("MENTION", {
+                commandName: "MENTION",
+                commandText: "text",
+                adminOnly: false,
+                commandDescription: "desc",
+                actionStringTest: "includes"
+            });
+        });
         it("should return \" - comando para admin\" if a admin command is passed", function () {
-            expect(adminDescription(CommandsNames.DELETE)).toBe(" - comando para admin");
+            expect(adminDescription("DELETE")).toBe(" - comando para admin");
         });
 
         it("should return empty string if a not admin command is passed", function () {
-            expect(adminDescription(CommandsNames.MENTION)).toBe("");
+            expect(adminDescription("MENTION")).toBe("");
+        });
+    });
+
+    describe("getCustomUsersFromAction", () => {
+        it("should return an array with users containing custom usernames", () => {
+            const action = "Hello @user1 @user2";
+            const users = getCustomUsersFromAction(action);
+
+            expect(users).toEqual([
+                { id: -1, first_name: "@user1" },
+                { id: -1, first_name: "@user2" },
+            ]);
+        });
+
+        it("should return an empty array when there are no custom usernames in the action", () => {
+            const action = "Hello world!";
+            const users = getCustomUsersFromAction(action);
+
+            expect(users).toEqual([]);
+        });
+    });
+
+    describe("getDefaultUsersFromAction", () => {
+        it("should return an array with users from the message entities", () => {
+            const entities = [
+                { type: "mention", offset: 6, length: 6, user: { id: 123, first_name: "John" } },
+                { type: "mention", offset: 13, length: 7, user: { id: 456, first_name: "Alice" } },
+            ] as TelegramBot.MessageEntity[];
+            const users = getDefaultUsersFromAction(entities);
+
+            expect(users).toEqual([
+                { id: 123, first_name: "John" },
+                { id: 456, first_name: "Alice" },
+            ]);
+        });
+
+        it("should return an empty array when there are no users in the message entities", () => {
+            const entities = [] as TelegramBot.MessageEntity[];
+            const users = getDefaultUsersFromAction(entities);
+
+            expect(users).toEqual([]);
         });
     });
 });

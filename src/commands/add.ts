@@ -1,24 +1,26 @@
-import { Commands, CommandsNames } from "../interfaces/commands";
+import { commandHandles, Commands, CommandsNames, registeredCommands } from "../interfaces/commands";
 import Group from "../models/group";
-import { CommandArgs } from "../interfaces/commandArgs";
+import { CommandArgs, ICommand } from "../interfaces/commandArgs";
 
 import pino from "pino";
+import { getCustomUsersFromAction, getDefaultUsersFromAction } from "../utils";
+
 const logger = pino();
 
 
-export class Add implements Commands {
-    name = CommandsNames.ADD;
+export class Add extends Commands {
+    static commandName: CommandsNames = "ADD";
     args: CommandArgs;
 
     constructor(args: CommandArgs) {
+        super();
         this.args = args;
     }
 
     async exec(): Promise<string> {
 
         const { name, chatId } = this.args;
-        const defaultUsers = this.args.defaultUsers ? this.args.defaultUsers : [];
-        const customUsers = this.args.customUsers ? this.args.customUsers : [];
+        const { defaultUsers, customUsers } = this.args.commandSpecialArgs;
 
         try {
             const group = await Group.findOne({ groupId: chatId, name });
@@ -47,5 +49,38 @@ export class Add implements Commands {
         } catch (error) {
             return `${error}`;
         }
+    }
+
+    static registryCommand(commandName: CommandsNames): void {
+        commandHandles.set(commandName, (args) => {
+            const customUsers = getCustomUsersFromAction(args.action);
+            const defaultUsers = getDefaultUsersFromAction(args.entities);
+
+            return {
+                command: commandName,
+                args: {
+                    name: args.name.toLowerCase(),
+                    commandSpecialArgs: {
+                        defaultUsers,
+                        customUsers
+                    },
+                    chatId: args.chatId,
+                    whoSent: args.whoSent
+                }
+            } as ICommand;
+        });
+
+        registeredCommands.set(commandName, {
+            commandName: commandName,
+            commandDescription: "&lt;nome do grupo&gt; &lt;@ das pessoas&gt; - adiciona pessoas num grupo",
+            adminOnly: true,
+            commandText: "mb add ",
+            actionStringTest: "startsWith"
+        });
+
+    }
+
+    static build(args: CommandArgs): Commands {
+        return new Add(args);
     }
 }

@@ -1,5 +1,7 @@
 import { Remove } from "./remove";
 import Group from "../models/group";
+import { commandHandles } from "../interfaces/commands";
+import { ICommand } from "../interfaces/commandArgs";
 
 
 describe("Remove command", () => {
@@ -10,9 +12,58 @@ describe("Remove command", () => {
         jest.clearAllMocks();
     });
 
+    it("should return object from build with set params", function () {
+        const args = {
+            name: "name",
+            whoSent: "whoSent",
+            chatId: 1,
+            commandSpecialArgs: {
+                defaultUsers: [],
+                customUsers: []
+            }
+        };
+        const built = Remove.build(args);
+        expect(built).toBeTruthy();
+        expect(built.args).toStrictEqual(args);
+    });
+
+    it("should registry command handle", function () {
+        Remove.registryCommand("REMOVE");
+
+        const args = {
+            action: "",
+            name: "",
+            chatId: 1,
+            whoSent: ""
+        };
+
+        const fun = commandHandles.get("REMOVE") as (args: unknown) => ICommand;
+
+        expect(fun(args)).toStrictEqual({
+            args: {
+                chatId: 1,
+                commandSpecialArgs: {
+                    customUsers: [],
+                    defaultUsers: []
+                },
+                name: "",
+                whoSent: ""
+            },
+            command: "REMOVE"
+        });
+    });
+
     it("should return \"Usuário não encontrado!\" when no user is found", async () => {
         Group.findOne = jest.fn().mockResolvedValue({ chatId, name });
-        const command = new Remove({ name, chatId });
+        const command = new Remove({
+            name,
+            chatId,
+            commandSpecialArgs: {
+                customUsers: [],
+                defaultUsers: []
+            },
+            whoSent: "sender"
+        });
         const result = await command.exec();
 
         expect(result).toEqual("Usuário não encontrado!");
@@ -20,7 +71,15 @@ describe("Remove command", () => {
 
     it("should return \"Grupo não encontrado!\" when no group is found", async () => {
         Group.findOne = jest.fn().mockResolvedValue(null);
-        const command = new Remove({ name, chatId, defaultUsers: [ { id: 1, first_name: "John" } ] });
+        const command = new Remove({
+            name,
+            chatId,
+            commandSpecialArgs: {
+                defaultUsers: [ { id: 1, first_name: "John" } ],
+                customUsers: []
+            },
+            whoSent: "sender"
+        });
         const result = await command.exec();
 
         expect(result).toEqual("Grupo não encontrado!");
@@ -31,7 +90,7 @@ describe("Remove command", () => {
         const users = [
             { id: 1, first_name: "John" },
             { id: 2, first_name: "Jane" },
-            { id: 3, first_name: "Bob" },
+            { id: 3, first_name: "Bob" }
         ];
         const group = { name, groupId: chatId, users, save: jest.fn() };
         const removeUsers = [ users[0], users[2] ];
@@ -39,7 +98,15 @@ describe("Remove command", () => {
 
         Group.findOne = jest.fn().mockResolvedValue(group);
         Group.prototype.save = jest.fn();
-        const command = new Remove({ name, chatId, defaultUsers: removeUsers });
+        const command = new Remove({
+            name,
+            chatId,
+            commandSpecialArgs: {
+                defaultUsers: removeUsers,
+                customUsers: []
+            },
+            whoSent: "sender"
+        });
         const result = await command.exec();
 
         expect(result).toEqual("Removido!");
@@ -50,7 +117,15 @@ describe("Remove command", () => {
 
     it("should return error message on error", async () => {
         Group.findOne = jest.fn().mockRejectedValue("Error");
-        const command = new Remove({ name, chatId, defaultUsers: [ { id: 1, first_name: "John" } ] });
+        const command = new Remove({
+            name,
+            chatId,
+            commandSpecialArgs: {
+                defaultUsers: [ { id: 1, first_name: "John" } ],
+                customUsers: []
+            },
+            whoSent: "sender"
+        });
         const result = await command.exec();
 
         expect(result).toEqual("Error");
