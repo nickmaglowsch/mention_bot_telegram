@@ -28,6 +28,31 @@ describe("TelegramFactory", () => {
         expect(command.args.chatId).toEqual(123456);
     });
 
+    it("should run custom name for MENTION", () => {
+        commandHandles.set("MENTION", (args: RegistryCommandArgs) => {
+            return {
+                command: "MENTION",
+                args: {
+                    name: args.name.toLowerCase(),
+                    chatId: args.chatId,
+                    whoSent: args.whoSent
+                } as CommandArgs
+            };
+        });
+        registeredCommands.set("MENTION", {
+            commandName: "MENTION",
+            commandDescription: "",
+            adminOnly: false,
+            commandText: "@",
+            actionStringTest: "includes"
+        });
+        const factory = baseFactory("@teste @test1");
+        const command = factory.build();
+
+        expect(command.args.name).toEqual("teste test1");
+        expect(command.args.chatId).toEqual(123456);
+    });
+
     it("should throw an error for an invalid command", () => {
         const factory = baseFactory("mb invalid command");
 

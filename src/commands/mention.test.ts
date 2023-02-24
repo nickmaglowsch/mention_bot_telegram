@@ -54,8 +54,8 @@ describe("Mention", () => {
             whoSent: "sender"
         };
         const mockGroupFindOne = jest
-            .spyOn(Group, "findOne")
-            .mockResolvedValue({
+            .spyOn(Group, "find")
+            .mockResolvedValue([ {
                 groupId: 123,
                 name: "test-group",
                 users: [
@@ -63,7 +63,7 @@ describe("Mention", () => {
                     { id: 2, first_name: "Mary" },
                     { id: -1, first_name: "Jane" }
                 ]
-            });
+            } ]);
 
         // Act
         const command = new Mention(args);
@@ -75,11 +75,13 @@ describe("Mention", () => {
         );
         expect(mockGroupFindOne).toHaveBeenCalledWith({
             groupId: 123,
-            name: "test-group"
+            name: {
+                $in: [ "test-group" ]
+            }
         });
     });
 
-    it("should return an error message when the group is not found", async () => {
+    it("should return an empty message when the group is not found", async () => {
         // Arrange
         const args: CommandArgs = {
             name: "test-group",
@@ -90,9 +92,10 @@ describe("Mention", () => {
             },
             whoSent: "sender"
         };
+
         const mockGroupFindOne = jest
-            .spyOn(Group, "findOne")
-            .mockResolvedValue(null);
+            .spyOn(Group, "find")
+            .mockResolvedValue([]);
 
         // Act
         const command = new Mention(args);
@@ -102,7 +105,9 @@ describe("Mention", () => {
         expect(result).toBe("");
         expect(mockGroupFindOne).toHaveBeenCalledWith({
             groupId: 123,
-            name: "test-group"
+            name: {
+                $in: [ "test-group" ]
+            }
         });
     });
 
@@ -118,12 +123,12 @@ describe("Mention", () => {
             whoSent: "sender"
         };
         const mockGroupFindOne = jest
-            .spyOn(Group, "findOne")
-            .mockResolvedValue({
+            .spyOn(Group, "find")
+            .mockResolvedValue([ {
                 groupId: 123,
                 name: "test-group",
                 users: []
-            });
+            } ]);
 
         // Act
         const command = new Mention(args);
@@ -133,7 +138,9 @@ describe("Mention", () => {
         expect(result).toBe("Grupo não possui membros ainda");
         expect(mockGroupFindOne).toHaveBeenCalledWith({
             groupId: 123,
-            name: "test-group"
+            name: {
+                $in: [ "test-group" ]
+            }
         });
     });
 });

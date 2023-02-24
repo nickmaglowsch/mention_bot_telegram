@@ -53,7 +53,7 @@ export class TelegramFactory {
             if (this.action[actionStringTest](commandText)) {
                 const args: RegistryCommandArgs = {
                     action: this.action,
-                    name: this.action.split(commandText)[1]?.split(" ")[0]?.trim().toLowerCase(),
+                    name: this.getName(key, commandText),
                     chatId: this.chatId,
                     whoSent: this.whoSent,
                     entities: this.entities ? this.entities : []
@@ -67,5 +67,15 @@ export class TelegramFactory {
                 return;
             }
         }
+    }
+
+    private getName(cmd: CommandsNames, commandText: string): string {
+        if (cmd === "MENTION") {
+            const regex = /@(\w+)\b/g;
+            const matches = this.action.match(regex)?.map(match => match.substring(1)) ?? [];
+            return matches.join(" ");
+        }
+
+        return this.action.split(commandText)[1]?.split(" ")[0]?.trim().toLowerCase();
     }
 }
