@@ -13,22 +13,34 @@ export class Mention extends Commands {
     }
 
     async exec(): Promise<string> {
-        const { name, chatId } = this.args;
-        const group = await Group.findOne({ groupId: chatId, name: name });
+        const { chatId } = this.args;
 
-        if (!group) return "";
+        const groups = await Group.find(
+            {
+                groupId: chatId,
+                name:
+                    {
+                        $in: this.createQuery()
+                    }
+            }
+        );
 
-        if (!group.users || group.users.length === 0)
+        if (groups.length === 0) return "";
+
+        if (groups.every(group => group.users.length === 0))
             return "Grupo não possui membros ainda";
 
-        return group.users.reduce((acc: string, user: IUser) => {
-            if (user.id === -1) {
-                acc += `${user.first_name} `;
-            } else {
-                acc += `<a href="tg://user?id=${user.id}">${user.first_name}</a> `;
-            }
-            return acc;
-        }, "");
+        const userLists = groups.map(group => {
+            return group.users.reduce((acc: string, user: IUser) => {
+                if (user.id === -1) {
+                    acc += `${user.first_name} `;
+                } else {
+                    acc += `<a href="tg://user?id=${user.id}">${user.first_name}</a> `;
+                }
+                return acc;
+            }, "");
+        });
+        return userLists.join("");
     }
 
     static registryCommand(commandName: CommandsNames): void {
@@ -54,5 +66,12 @@ export class Mention extends Commands {
 
     static build(args: CommandArgs): Commands {
         return new Mention(args);
+    }
+
+    private createQuery(): string[] {
+        const { name } = this.args;
+
+        return name.split(" ")
+            .map((nameStr) => nameStr);
     }
 }
