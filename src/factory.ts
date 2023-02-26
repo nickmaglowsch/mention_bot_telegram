@@ -71,7 +71,7 @@ export class TelegramFactory {
 
     private getName(cmd: CommandsNames, commandText: string): string {
         if (cmd === "MENTION") {
-            const regex = /@(\w+)\b/g;
+            const regex = /@(\w+[\wãõáéíóú]*)\b/gi;
             const matches = this.action.match(regex)?.map(match => match.substring(1)) ?? [];
             return matches.join(" ");
         }

@@ -46,10 +46,10 @@ describe("TelegramFactory", () => {
             commandText: "@",
             actionStringTest: "includes"
         });
-        const factory = baseFactory("@teste @test1");
+        const factory = baseFactory("@teste @santão");
         const command = factory.build();
 
-        expect(command.args.name).toEqual("teste test1");
+        expect(command.args.name).toEqual("teste santão");
         expect(command.args.chatId).toEqual(123456);
     });
 
